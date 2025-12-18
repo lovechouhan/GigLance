@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Live Projects</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="p-6">
+
+    <!-- Page Header -->
+    
+     <header class="flex items-center justify-between p-6 mb-8 rounded-2xl"
+         style="background:  #4c6ae2">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+            <div>
+                <h1 class="text-2xl font-bold text-white">Live Jobs</h1>
+                
+            </div>
+            <a href="javascript:history.back()"
+               class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white rounded-lg text-slate-800 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+
+    <!-- Info Note -->
+    <div class="p-4 mb-6 text-sm text-blue-800 rounded-lg bg-blue-50">
+        These Jobs are fetched from verified external platforms.
+        You will be redirected to apply.
+    </div>
+
+    <!-- Filters -->
+
+    <div class="flex flex-col gap-4 p-4 mb-8 bg-white border rounded-xl md:flex-row">
+
+  <!-- Search -->
+  <input id="jobSearch" placeholder="Search jobs…" />
+
+<select id="jobCategory">
+  <option value="">All Categories</option>
+  <option value="Marketing">Marketing</option>
+  <option value="Writing">Writing</option>
+  <option value="Software Development">Software Development</option>
+</select>
+
+<select id="jobType">
+  <option value="">All Types</option>
+  <option value="full_time">Full Time</option>
+  <option value="freelance">Freelance</option>
+  <option value="contract">Contract</option>
+</select>
+
+
+</div>
+
+    
+    <!-- Projects List -->
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3" id="projectsContainer">
+
+        <div th:each="j : ${jobs}"
+     class="p-5 bg-white border shadow-sm rounded-xl job-card"
+     th:data-project-title="${j['title']}"
+     th:data-project-company="${j['company_name']}"
+     th:data-project-category="${j['category']}"
+     th:data-project-jobtype="${j['job_type']}"
+     th:data-project-url="${j['url']}">
+
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold"
+                    th:text="${j['title']}">
+                    Project Title
+                </h3>
+
+                <span class="px-2 py-1 text-xs text-green-700 bg-green-100 rounded">
+                    LIVE
+                </span>
+            </div>
+
+            <p class="mb-2 text-sm text-gray-600"
+               th:text="${j['company_name']}">
+                Company Name
+            </p>
+            
+            <p class="mb-3 text-sm text-gray-500"
+               th:text="${j['category']}">
+                Category
+            </p>
+
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-400"
+                      th:text="${j['job_type']}">
+                    Contract
+                </span>
+                
+                <a th:href="${j['url']}"
+                   target="_blank"
+                   class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                    Apply on Platform
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+  
+
+<th:block layout:fragment="livejobsscript">
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const searchInput   = document.getElementById("jobSearch");
+  const categoryInput = document.getElementById("jobCategory");
+  const typeInput     = document.getElementById("jobType");
+
+  function filterJobs() {
+    const searchText = searchInput.value.toLowerCase();
+    const category   = categoryInput.value.toLowerCase();
+    const jobType    = typeInput.value.toLowerCase();
+
+    const cards = document.querySelectorAll(".job-card");
+
+    cards.forEach(card => {
+      const title    = (card.dataset.projectTitle || "").toLowerCase();
+      const company  = (card.dataset.projectCompany || "").toLowerCase();
+      const cat      = (card.dataset.projectCategory || "").toLowerCase();
+      const type     = (card.dataset.projectJobtype || "").toLowerCase();
+
+      const textMatch =
+        title.includes(searchText) ||
+        company.includes(searchText);
+
+      const categoryMatch =
+        category === "" || cat === category;
+
+      const typeMatch =
+        jobType === "" || type === jobType;
+
+      if (textMatch && categoryMatch && typeMatch) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  searchInput.addEventListener("keyup", filterJobs);
+  categoryInput.addEventListener("change", filterJobs);
+  typeInput.addEventListener("change", filterJobs);
+
+});
+</script>
+
+</th:block>
+</div>
+</body>
+</html>

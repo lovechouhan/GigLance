@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Payments Management | Admin</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen p-8 bg-gray-100 md:ml-64">
+
+    <!-- HEADER -->
+     <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-xl"
+       style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Payments Management</h1>
+            <!-- <p class="mt-1 text-sm text-slate-300">Discover and connect with the perfect talent for your next project.</p> -->
+        </div>
+        <a th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition bg-white rounded-lg shadow-md text-slate-800 hover:bg-gray-100 hover:shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+
+    <!-- FILTER BAR -->
+ <!-- FILTER BAR -->
+<div class="p-5 mb-6 bg-white shadow rounded-xl">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+
+        <!-- Status -->
+        <div>
+            <label class="block mb-1 text-xs font-semibold text-gray-600">
+                Status
+            </label>
+            <select id="statusFilter"
+                    class="w-full px-3 py-2 text-sm border rounded-lg">
+                <option value="ALL">All</option>
+                <option value="HOLD">HOLD</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="FAILED">FAILED</option>
+                <option value="NOT_INITIATED">PENDING</option>
+            </select>
+        </div>
+
+        <!-- Freelancer -->
+        <div>
+            <label class="block mb-1 text-xs font-semibold text-gray-600">
+                Freelancer
+            </label>
+            <input id="freelancerFilter"
+                   type="text"
+                   placeholder="Freelancer name"
+                   class="w-full px-3 py-2 text-sm border rounded-lg">
+        </div>
+
+        <!-- Project -->
+        <div>
+            <label class="block mb-1 text-xs font-semibold text-gray-600">
+                Project
+            </label>
+            <input id="projectFilter"
+                   type="text"
+                   placeholder="Project title"
+                   class="w-full px-3 py-2 text-sm border rounded-lg">
+        </div>
+
+        <!-- Reset -->
+        <div class="flex items-end">
+            <button onclick="resetFilters()"
+                    class="w-full px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-400 rounded-lg hover:bg-gray-300">
+                Reset
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+    <!-- PAYMENTS GRID -->
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+       <div th:each="p : ${payments}"
+     class="p-6 transition bg-white border-t-4 shadow-lg rounded-xl payment-card"
+     th:attr="
+        data-status=${p.status},
+        data-freelancer=${p.freelancer.name},
+        data-project=${p.project.title}
+     "
+     th:classappend="${p.status.name() == 'HOLD'} ? ' border-t-amber-500' : (${p.status.name() == 'COMPLETED'} ? ' border-t-green-500' : ' border-t-gray-300')">
+
+
+            <!-- PAYMENT ID & STATUS -->
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Payment ID</p>
+                    <p class="text-lg font-bold text-gray-900" th:text="${p.id}">#1</p>
+                </div>
+                
+                <span th:if="${p.status.name() == 'HOLD'}"
+                      class="px-3 py-1 text-xs font-semibold rounded-full text-amber-700 bg-amber-100">
+                    HOLD
+                </span>
+
+                <span th:if="${p.status.name() == 'COMPLETED'}"
+                      class="px-3 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                    COMPLETED
+                </span>
+
+                <span th:if="${p.status.name() == 'FAILED'}"
+                      class="px-3 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-full">
+                    FAILED
+                </span>
+
+                <span th:if="${p.status.name() == 'NOT_INITIATED'}"
+                      class="px-3 py-1 text-xs font-semibold text-gray-700 bg-gray-100 rounded-full">
+                    PENDING
+                </span>
+            </div>
+
+            <!-- FREELANCER INFO -->
+            <div class="pb-4 mb-4 border-b border-gray-200">
+                <p class="text-xs font-medium text-gray-500">Freelancer</p>
+                <p class="text-base font-semibold text-gray-900" th:text="${p.freelancer.name}">
+                    Freelancer Name
+                </p>
+                <p class="text-xs text-gray-600" th:text="${p.freelancer.email}">
+                    freelancer@email.com
+                </p>
+            </div>
+
+            <!-- PROJECT INFO -->
+            <div class="pb-4 mb-4 border-b border-gray-200">
+                <p class="text-xs font-medium text-gray-500">Project</p>
+                <p class="text-sm font-semibold text-gray-900" th:text="${p.project.title}">
+                    Project Title
+                </p>
+            </div>
+
+            <!-- AMOUNT & DATE -->
+            <div class="grid grid-cols-2 gap-4 pb-4 mb-4 border-b border-gray-200">
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Amount</p>
+                    <p class="text-xl font-bold text-green-600">
+                        ₹<span th:text="${p.amount}">0</span>
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-gray-500">Created</p>
+                    <p class="text-sm font-semibold text-gray-900" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}">
+                        01 Jan 2025
+                    </p>
+                </div>
+            </div>
+
+            <!-- CLIENT INFO -->
+            <div class="pb-4 mb-4 border-b border-gray-200">
+                <p class="text-xs font-medium text-gray-500">Client</p>
+                <p class="text-sm font-semibold text-gray-900" th:text="${p.client.name}">
+                    Client Name
+                </p>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex flex-row gap-2">
+                <a th:href="@{/admin/payment/{id}(id=${p.id})}"
+                   class="flex-1 px-3 py-2 text-sm font-semibold text-center text-white transition bg-blue-600 rounded-lg hover:bg-blue-700">
+                    View
+                </a>
+
+                <button th:if="${p.status.name() == 'HOLD'}"
+                        onclick="openReleaseModal([[${p.id}]], '[[${p.freelancer.name}]]', [[${p.amount}]])"
+                        class="flex-1 px-4 py-2 text-sm font-semibold text-white transition bg-green-600 rounded-lg hover:bg-green-700">
+                    Release
+                </button>
+
+                <a th:if="${p.status.name() == 'HOLD'}"
+                   href="#"
+                   onclick="return confirm('Cancel this payment?')"
+                   class="flex-1 px-3 py-2 text-sm font-semibold text-center text-white transition bg-red-600 rounded-lg hover:bg-red-700">
+                    Cancel
+                </a>
+            </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div th:if="${#lists.isEmpty(payments)}"
+             class="p-10 text-center text-gray-500 bg-white shadow col-span-full rounded-xl">
+            <p class="text-lg font-semibold">No payments found.</p>
+            <p class="text-sm">Adjust your filters to see payments.</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- RELEASE MODAL -->
+<div id="releaseModal"
+     class="fixed inset-0 z-50 items-center justify-center hidden bg-black/40">
+
+    <div class="w-full max-w-md p-6 bg-white shadow-xl rounded-xl">
+        <h3 class="mb-4 text-lg font-bold">Release Payment</h3>
+
+        <p class="mb-2 text-sm">
+            Freelancer:
+            <span id="modalFreelancer" class="font-semibold"></span>
+        </p>
+
+        <p class="mb-6 text-xl font-bold text-green-600"
+           id="modalAmount">
+            ₹0
+        </p>
+
+        <form id="releaseForm" method="POST">
+            <input type="hidden" id="escrowId">
+
+            <div class="flex gap-3">
+                <button type="button"
+                        onclick="closeReleaseModal()"
+                        class="flex-1 py-2 bg-gray-200 rounded-lg">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        class="flex-1 py-2 font-semibold text-white bg-green-600 rounded-lg">
+                    Confirm Release
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openReleaseModal(id, name, amount) {
+    document.getElementById('escrowId').value = id;
+    document.getElementById('modalFreelancer').textContent = name;
+    document.getElementById('modalAmount').textContent = '₹' + amount;
+    document.getElementById('releaseModal').classList.remove('hidden');
+}
+
+function closeReleaseModal() {
+    document.getElementById('releaseModal').classList.add('hidden');
+}
+
+document.getElementById('releaseForm').addEventListener('submit', function () {
+    const id = document.getElementById('escrowId').value;
+    this.action = '/admin/escrow/' + id + '/release';
+});
+</script>
+
+
+<th:block layout:fragment="adminpaymentjs">
+    <script>
+const statusFilter = document.getElementById('statusFilter');
+const freelancerFilter = document.getElementById('freelancerFilter');
+const projectFilter = document.getElementById('projectFilter');
+
+const cards = document.querySelectorAll('.payment-card');
+
+function applyFilters() {
+    const status = statusFilter.value.toLowerCase();
+    const freelancer = freelancerFilter.value.toLowerCase();
+    const project = projectFilter.value.toLowerCase();
+
+    cards.forEach(card => {
+        const cardStatus = card.dataset.status.toLowerCase();
+        const cardFreelancer = card.dataset.freelancer.toLowerCase();
+        const cardProject = card.dataset.project.toLowerCase();
+
+        const statusMatch =
+            status === 'all' || cardStatus === status;
+
+        const freelancerMatch =
+            cardFreelancer.includes(freelancer);
+
+        const projectMatch =
+            cardProject.includes(project);
+
+        if (statusMatch && freelancerMatch && projectMatch) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// live filtering
+statusFilter.addEventListener('change', applyFilters);
+freelancerFilter.addEventListener('keyup', applyFilters);
+projectFilter.addEventListener('keyup', applyFilters);
+
+function resetFilters() {
+    statusFilter.value = 'ALL';
+    freelancerFilter.value = '';
+    projectFilter.value = '';
+    applyFilters();
+}
+</script>
+
+</th:block>
+</body>
+</html>

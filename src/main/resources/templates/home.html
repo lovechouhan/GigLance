@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+  <title>Welcome — Freelancing</title>
+</head>
+
+<body>
+  <section layout:fragment="content">
+ <section class="items-center justify-between px-8 py-20 md:flex">
+<div class="max-w-xl">
+<h2 class="text-4xl font-bold leading-snug">Hire the Best Freelancers. Work With Top Clients.</h2>
+<p class="mt-4 text-gray-600">Join the fast growing freelance community in India to earn, hire and grow your network.</p>
+<div class="mt-6 space-x-3">
+<button class="px-6 py-3 text-white bg-black rounded-xl hover:bg-gray-900">Find Work</button>
+<button class="px-6 py-3 border rounded-xl hover:bg-gray-100">Post a Job</button>
+</div>
+</div>
+
+
+<div class="mt-8 md:mt-0">
+<img th:src="@{/images/freelancer.jpg}" alt="freelancer" class="rounded-2xl shadow-lg w-[450px]">
+</div>
+</section>
+
+
+<!-- Categories Section -->
+<section class="px-8 py-16 bg-white">
+<h3 class="mb-6 text-2xl font-bold">Popular Categories</h3>
+<div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+<div class="p-5 font-medium text-center bg-gray-100 rounded-xl">Web Development</div>
+<div class="p-5 font-medium text-center bg-gray-100 rounded-xl">UI/UX Design</div>
+<div class="p-5 font-medium text-center bg-gray-100 rounded-xl">Graphic Designing</div>
+<div class="p-5 font-medium text-center bg-gray-100 rounded-xl">Content Writing</div>
+</div>
+</section>
+  </section>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>View Proposals</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen p-8 bg-gray-100">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-xl"
+     style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div>
+            <h1 class="text-2xl font-bold text-white">View Proposals</h1>
+            <p class="mt-1 text-sm text-white">Select a project to view its proposals.</p>
+        </div>
+        <a th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition bg-white rounded-lg shadow-md text-slate-800 hover:bg-gray-100 hover:shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Projects List -->
+    <div class="w-full">
+        <!-- Empty State -->
+        <div th:if="${projects.size() == 0}" class="p-12 text-center bg-white shadow-lg rounded-xl">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100">
+                <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <p class="text-lg font-medium text-black">No projects posted yet.</p>
+            <p class="mt-1 text-sm text-black">Create a project to start receiving proposals.</p>
+        </div>
+
+        <!-- Project Cards -->
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div th:each="project : ${projects}" class="overflow-hidden transition bg-white shadow-md rounded-xl hover:shadow-xl">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between p-4 ">
+                <div class="flex-1 min-w-0 pr-4">
+                    <h2 class="text-lg font-semibold text-black truncate" th:text="${project.title}">Project Title</h2>
+                    <p class="text-sm text-black truncate" th:text="${project.description}">Project description goes here...</p>
+                </div>
+                <span class="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full flex items-center gap-1.5"
+                      th:classappend="${
+                        project.status == 'OPEN' ? 'bg-emerald-500 text-white' :
+                        project.status == 'IN_PROGRESS' ? 'bg-amber-500 text-white' : 'bg-blue-500 text-white'
+                      }">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    <span th:text="${project.status}">OPEN</span>
+                </span>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-5">
+                <div class="flex flex-wrap gap-4 mb-4">
+                    <div class="flex items-center gap-2 px-3 py-2 border rounded-lg bg-emerald-50 border-emerald-100">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-sm text-slate-700"><strong>Budget:</strong> ₹<span th:text="${project.budget}">0</span></span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-2 border border-purple-100 rounded-lg bg-purple-50">
+                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                        <span class="text-sm text-black"><strong>Category:</strong> <span th:text="${project.category}">Category</span></span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-2 border rounded-lg bg-amber-50 border-amber-100">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="text-sm text-black"><strong>Deadline:</strong> <span th:text="${project.deadline}">Deadline</span></span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <a th:href="@{/client/viewproposalofanproject/{id}(id=${project.id})}"
+                       class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow-blue-500/30">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        View Proposals
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

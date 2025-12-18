@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Transactions - GIGLANCE</title>
+</head>
+
+<body class="bg-gray-100">
+<div layout:fragment="content">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-2xl"
+      style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+      <div>
+        <h1 class="text-3xl font-bold text-white">GIGLANCE</h1>
+        <p class="mt-1 text-slate-300">Your Payment History</p>
+      </div>
+      <a th:href="@{/client/dashboard}"
+         class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-black bg-white rounded-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </header>
+
+    <div class="p-6 mx-auto max-w">
+
+        <!-- Page Title -->
+        <div class="flex items-center gap-3 mb-6">
+          <div class="p-3 bg-blue-500 shadow-lg rounded-xl shadow-blue-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800">Transaction Details</h2>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${payments == null or #lists.isEmpty(payments)}" 
+             class="p-10 text-center bg-white shadow-lg rounded-2xl">
+          <div class="flex items-center justify-center w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full">
+            <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <h3 class="mb-2 text-xl font-bold text-gray-800">No Transactions Found</h3>
+          <p class="text-gray-500">Your payment history will appear here</p>
+        </div>
+
+        <!-- Payment Cards -->
+        <div th:each="p : ${payments}" 
+             class="mb-6 overflow-hidden transition-all bg-white border border-gray-100 shadow-lg rounded-2xl hover:shadow-xl">
+
+            <!-- Card Header -->
+            <div class="p-5 border bg-slate-100">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-black" th:text="${p.project.title}">Project Title</h3>
+                <span class="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium rounded-full"
+                    th:text="${p.status}"
+                    th:classappend="
+                        ${p.status.name() == 'COMPLETED'} ? 'bg-emerald-100 text-emerald-700' :
+                        (${p.status.name() == 'HOLD'} ? 'bg-amber-100 text-amber-700' :
+                        (${p.status.name() == 'PENDING'} ? 'bg-blue-100 text-blue-700' :
+                        (${p.status.name() == 'NOT_INITIATED'} ? 'bg-gray-100 text-gray-700' :
+                        'bg-red-100 text-red-700')))">
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6">
+              <!-- Info Grid -->
+              <div class="grid gap-4 md:grid-cols-2">
+
+                <!-- Left Column -->
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 p-3 border border-blue-100 bg-blue-50 rounded-xl">
+                    <div class="p-2 bg-blue-500 rounded-lg">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-blue-600">Transaction ID</p>
+                      <p class="text-sm font-semibold text-blue-800" th:text="${p.paymentInfo.transactionId != null ? p.paymentInfo.transactionId : 'N/A'}"></p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border border-purple-100 bg-purple-50 rounded-xl">
+                    <div class="p-2 bg-purple-500 rounded-lg">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-purple-600">Freelancer</p>
+                      <p class="text-sm font-semibold text-purple-800" th:text="${p.freelancer.name}">Freelancer Name</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border bg-cyan-50 rounded-xl border-cyan-100">
+                    <div class="p-2 rounded-lg bg-cyan-500">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-cyan-600">Freelancer Email</p>
+                      <p class="text-sm font-semibold text-cyan-800" th:text="${p.freelancer.email}"></p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border bg-rose-50 rounded-xl border-rose-100">
+                    <div class="p-2 rounded-lg bg-rose-500">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-rose-600">Category</p>
+                      <p class="text-sm font-semibold text-rose-800" th:text="${p.project.category}"></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl">
+                    <div class="p-2 rounded-lg bg-emerald-500">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-emerald-600">Amount</p>
+                      <p class="text-lg font-bold text-emerald-800">₹<span th:text="${p.amount}"></span></p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border border-indigo-100 bg-indigo-50 rounded-xl">
+                    <div class="p-2 bg-indigo-500 rounded-lg">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-indigo-600">Payment Method</p>
+                      <p class="text-sm font-semibold text-indigo-800" th:text="${p.paymentInfo != null ? p.paymentInfo.paymentMethod : 'N/A'}"></p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border bg-amber-50 rounded-xl border-amber-100">
+                    <div class="p-2 rounded-lg bg-amber-500">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-amber-600">Payment Status</p>
+                      <p class="text-sm font-semibold text-amber-800" th:text="${p.paymentInfo != null ? p.paymentInfo.paymentStatus : 'N/A'}"></p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 border bg-slate-50 rounded-xl border-slate-200">
+                    <div class="p-2 rounded-lg bg-slate-600">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-xs text-slate-500">Date</p>
+                      <p class="text-sm font-semibold text-slate-700" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Details -->
+              <div class="grid grid-cols-3 gap-3 mt-4">
+                <div class="p-3 text-center border border-gray-100 bg-gray-50 rounded-xl">
+                  <p class="mb-1 text-xs text-gray-500">Receipt ID</p>
+                  <p class="text-sm font-semibold text-gray-700" th:text="${p.paymentInfo != null ? p.paymentInfo.receiptId : 'N/A'}"></p>
+                </div>
+                <div class="p-3 text-center border border-gray-100 bg-gray-50 rounded-xl">
+                  <p class="mb-1 text-xs text-gray-500">Order ID</p>
+                  <p class="text-sm font-semibold text-gray-700" th:text="${p.paymentInfo != null ? p.paymentInfo.orderId : 'N/A'}"></p>
+                </div>
+                <div class="p-3 text-center border border-gray-100 bg-gray-50 rounded-xl">
+                  <p class="mb-1 text-xs text-gray-500">Currency</p>
+                  <p class="text-sm font-semibold text-gray-700" th:text="${p.paymentInfo != null ? p.paymentInfo.currency : 'N/A'}"></p>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="p-4 mt-4 border bg-slate-50 rounded-xl border-slate-100">
+                <div class="flex items-start gap-3">
+                  <div class="p-2 bg-slate-600 rounded-lg mt-0.5">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="mb-1 text-sm font-semibold text-slate-700">Description</p>
+                    <p class="text-sm text-slate-600" th:text="${p.project.description}"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Download Button -->
+              <div class="mt-5 text-right">
+                <a th:href="@{'/client/payment/receipt/' + ${p.id}}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-500/30 transition-all">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                  Download Receipt
+                </a>
+              </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

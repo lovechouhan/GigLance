@@ -1,0 +1,90 @@
+<nav th:fragment="navbar"
+     id="navbar"
+     class="w-full py-3 shadow-lg"
+     style="--navbar-bg-color: var(--primary-color, #4c6ae2); background: linear-gradient(to right, var(--navbar-bg-color), var(--navbar-bg-color));">
+
+  <style>
+    :root {
+      --navbar-bg-color: #030106;
+      --navbar-text-color: #ffffff;
+      --navbar-hover-bg: rgba(255, 255, 255, 0.2);
+      --navbar-border-color: #ffffff;
+    }
+    
+    #navbar {
+      background: linear-gradient(to right, var(--navbar-bg-color), var(--navbar-bg-color));
+    }
+  </style>
+
+  <div class="flex items-center w-full px-4">
+
+    <!-- LEFT: Sidebar Toggle -->
+    <button id="sidebar-toggle"
+            class="p-2 transition border rounded-lg"
+            style="color: var(--navbar-text-color); border-color: var(--navbar-border-color);"
+            onmouseover="this.style.backgroundColor = 'var(--navbar-hover-bg)'"
+            onmouseout="this.style.backgroundColor = 'transparent'">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+          d="M2 4.5A.75.75 0 012.75 3h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.5zm0 5A.75.75 0 012.75 8h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 9.5zm0 5A.75.75 0 012.75 13h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 14.5z"
+          clip-rule="evenodd"/>
+      </svg>
+    </button>
+
+    <!-- CENTER: Logo -->
+    <a  class="flex items-center justify-center gap-3 mx-auto">
+      <img src="/images/gig.jpg"
+           class="border-2 rounded-full shadow-md h-13 w-13"
+           style="border-color: var(--navbar-border-color); display: flex; align-items: center;" />
+      <span class="text-2xl font-bold leading-none" style="color: var(--navbar-text-color);">GigLance</span>
+    </a>
+
+    <!-- RIGHT: Notification & Profile -->
+<div class="flex items-center gap-4 ml-auto">
+
+    <!-- Notification Icon with Modern Badge -->
+<a th:href="@{/user/notifications}"
+   class="relative flex items-center justify-center w-10 h-10 transition rounded-full group"
+   style="--hover-bg: var(--navbar-hover-bg);"
+   onmouseover="this.style.backgroundColor = 'var(--navbar-hover-bg)'"
+   onmouseout="this.style.backgroundColor = 'transparent'">
+
+    <!-- Icon -->
+    <i class="text-xl fa-regular fa-bell" style="color: var(--navbar-text-color);"></i>
+
+    <!-- Floating Badge -->
+    <span th:if="${globalUnread != null and globalUnread > 0}"
+          class="absolute top-0 right-0 flex items-center justify-center w-6 h-6 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2 rounded-full shadow-lg"
+          style="background-color: #FF6B35; min-width: 24px; line-height: 24px;">
+        <span th:text="${globalUnread > 99 ? '99+' : globalUnread}"></span>
+    </span>
+
+</a>
+
+    <!-- Profile -->
+    <a th:href="@{/user/profile}"
+       class="relative flex items-center justify-center w-12 h-12 transition rounded-full"
+       onmouseover="this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'"
+       onmouseout="this.style.backgroundColor = 'transparent'">
+        <img th:src="@{/images/image.png}"
+             class="object-cover w-10 h-10 border rounded-full shadow"
+             style="border-color: var(--navbar-border-color);" />
+    </a>
+
+</div>
+
+  </div>
+
+  <!-- JavaScript to allow easy color customization -->
+  <script>
+    function setNavbarColor(color, textColor = '#ffffff', hoverOpacity = 0.2) {
+      const root = document.documentElement;
+      root.style.setProperty('--navbar-bg-color', color);
+      root.style.setProperty('--navbar-text-color', textColor);
+      root.style.setProperty('--navbar-hover-bg', `rgba(255, 255, 255, ${hoverOpacity})`);
+    }
+    // Default: Purple - Change this to customize
+    // Usage: setNavbarColor('#FF6B35') for Orange, setNavbarColor('#000000') for Black, etc.
+  </script>
+
+</nav>

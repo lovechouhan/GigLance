@@ -1,0 +1,106 @@
+<!-- client/clientsidebar.html -->
+ <div id="sidebar-backdrop" class="fixed inset-0 z-40 hidden bg-black"></div>
+
+
+ <meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+      
+<aside th:fragment="sidebar"
+        id="logo-sidebar"
+            class="fixed top-0 left-0 z-40 w-64 h-screen max-w-full text-white transition-transform duration-300 transform -translate-x-full shadow-md"
+            style="background: linear-gradient(to right, var(--sidebar-bg-color, #4c6ae2), var(--sidebar-bg-color-light, #4c6ae2));"
+            aria-label="Sidebar">
+            
+    <style>
+      :root {
+        --sidebar-bg-color: #4c6ae2;
+        --sidebar-bg-color-light: #4c6ae2;
+        --sidebar-text-color: #ffffff;
+        --sidebar-hover-bg: rgba(255, 255, 255, 0.15);
+        --sidebar-border-color: #FF7675;
+      }
+      
+      #logo-sidebar {
+        background: linear-gradient(to right, var(--sidebar-bg-color), var(--sidebar-bg-color-light)) !important;
+      }
+      
+      #logo-sidebar a {
+        color: var(--sidebar-text-color);
+      }
+      
+      #logo-sidebar a:hover {
+        border-left-color: var(--sidebar-border-color);
+        background-color: var(--sidebar-hover-bg);
+      }
+    </style> <!-- inline fallback so it's hidden even if Tailwind not loaded -->
+
+       <script th:inline="javascript">
+// Sidebar toggle logic for all screens
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('logo-sidebar');
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    
+    if (sidebar && toggleBtn) {  // Only initialize if elements exist
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (backdrop) backdrop.classList.remove('hidden');
+        }
+        
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (backdrop) backdrop.classList.add('hidden');
+        }
+        
+        toggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (sidebar.classList.contains('-translate-x-full')) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
+        });
+        
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                closeSidebar();
+            }
+        });
+        
+        if (backdrop) {
+            backdrop.addEventListener('click', closeSidebar);
+        }
+        
+        // Close sidebar on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+    }
+});
+</script>
+
+
+
+
+  <div class="flex flex-col h-full px-3 py-4">
+    <a href="/" class="flex items-center justify-center mb-5">
+      <img src="/images/gig.jpg" class="h-20 rounded-full" alt="Logo"/>
+    </a>
+
+    <ul class="space-y-2 font-medium">
+      <li><a th:href="@{/client/dashboard/{id}(id=${#authentication.principal.id})}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Dashboard</a></li>
+      <li><a th:href="@{'/client/findfreelancers'}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Search</a></li>
+      <li><a th:href="@{'/client/postproject'}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#d6d5dd] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Post Work</a></li>
+    <li><a th:href="@{/client/viewproposal/{id}(id=${loggedInUser.id})}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Proposals</a></li>
+      <li><a th:href="@{/contracts/activeContracts/{id}(id=${loggedInUser.id})}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Active Contracts</a></li>
+      <li><a th:href="@{'/client/myprojects'}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Projects</a></li>
+      <li><a th:href="@{/client/payment/{id}(id=${loggedInUser.id})}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Payments</a></li>
+      <li><a th:href="@{'/logout'}" class="flex items-center p-2 rounded hover:bg-gradient-to-r hover:from-[#6C5CE7] hover:to-[#A29BFE] hover:text-white hover:shadow-md border-l-4 border-transparent hover:border-[#FF7675]">Logout</a></li>
+    </ul>
+  </div>
+</aside>
+<div class="dashboard-clean">
+    <!-- Only dashboard content here -->
+</div>

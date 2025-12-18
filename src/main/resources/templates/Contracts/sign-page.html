@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .signature-canvas {
+            width: 100%;
+            height: 150px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+
+<body class="p-8 bg-gray-50">
+
+<div class="max-w-xl p-6 mx-auto bg-white shadow rounded-xl">
+
+    <h2 class="mb-2 text-xl font-bold">Sign Contract</h2>
+
+    <p class="mb-4 text-gray-600">
+        You are signing as: 
+        <span class="font-semibold" th:text="${role}"></span>
+    </p>
+
+    <div>
+        <canvas id="sig" class="signature-canvas"></canvas>
+    </div>
+
+    <div class="flex justify-between mt-4">
+        <button onclick="clearCanvas()" class="px-4 py-2 bg-gray-200 rounded">Clear</button>
+        <button onclick="submitSignature()" class="px-4 py-2 text-white bg-blue-600 rounded">
+            Submit Signature
+        </button>
+    </div>
+
+    <p id="msg" class="mt-4 text-green-600"></p>
+
+</div>
+
+
+<th:block layout:fragment="sign2scripts">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const role = /*[[${role}]]*/ "client";
+    const token = /*[[${token}]]*/ "";
+    const contractId = /*[[${contract.id}]]*/ 0;
+
+    /*]]>*/
+</script>
+
+<script>
+    const canvas = document.getElementById("sig");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+
+    canvas.addEventListener("mousedown", e => { drawing = true; ctx.moveTo(e.offsetX, e.offsetY); });
+    canvas.addEventListener("mousemove", e => { if (drawing) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); }});
+    canvas.addEventListener("mouseup", () => drawing = false);
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    async function submitSignature() {
+        const data = canvas.toDataURL("image/png");
+
+        let res = await fetch(`/contract/${contractId}/sign?role=${role}&token=${token}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({image: data})
+        });
+
+        let json = await res.json();
+
+        if (json.success) {
+            document.getElementById("msg").textContent = "Signature saved successfully!";
+        } else {
+            document.getElementById("msg").textContent = "Error: " + json.message;
+        }
+    }
+</script>
+</th:block>
+
+
+</body>
+</html>

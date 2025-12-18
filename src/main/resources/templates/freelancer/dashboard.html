@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Freelancer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<!-- Light professional background with subtle warm gray -->
+<body >
+    <div layout:fragment="content">
+        <div class="max-w-full p-6 mx-auto">
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="flex items-start gap-3 p-4 mb-6 border rounded-lg bg-emerald-50 border-emerald-200">
+                <svg class="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-emerald-900" th:text="${success}">Success message</p>
+                </div>
+            </div>
+
+            <div th:if="${error}" class="flex items-start gap-3 p-4 mb-6 border border-red-200 rounded-lg bg-red-50">
+                <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <p class="font-medium text-red-900" th:text="${error}">Error message</p>
+                </div>
+            </div>
+
+            <!-- Clean white header with subtle blue accent -->
+            <div class="p-8 mb-8 bg-blue-500 border shadow-sm rounded-2xl">
+                <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight text-white b md:text-4xl">LOVE CHOUHAN</h1>
+                        <p class="mt-1 text-white">Freelancer Dashboard Overview</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="/freelancer/profile/edit" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-all duration-200">
+                            Edit Profile
+                        </a>
+                        <a href="/freelancer/billing" class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md">
+                            Billing & Payments
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 gap-5 mb-8 sm:grid-cols-2 lg:grid-cols-3">
+                <!-- Total Earnings - Green theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-emerald-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Total Earnings</p>
+                            <p class="mt-2 text-3xl font-bold text-emerald-600" th:text="${'₹' + (totalEarnings ?: 0)}">₹100</p>
+                        </div>
+                        <div class="p-3 transition-colors bg-emerald-100 rounded-xl group-hover:bg-emerald-500">
+                            <svg class="w-6 h-6 transition-colors text-emerald-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rating - Amber/Orange theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-amber-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Rating</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <p class="text-3xl font-bold text-amber-600" th:text="${rating}">3.0</p>
+                                <div class="flex gap-0.5">
+                                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 transition-colors bg-amber-100 rounded-xl group-hover:bg-amber-500">
+                            <svg class="w-6 h-6 transition-colors text-amber-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proposals Sent - Blue theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-blue-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Proposals Sent</p>
+                            <p class="mt-2 text-3xl font-bold text-blue-600" th:text="${proposalsSent ?: 0}">12</p>
+                        </div>
+                        <div class="p-3 transition-colors bg-blue-100 rounded-xl group-hover:bg-blue-500">
+                            <svg class="w-6 h-6 text-blue-600 transition-colors group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invitations Received - Indigo theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-indigo-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Invitations Received</p>
+                            <p class="mt-2 text-3xl font-bold text-indigo-600" th:text="${invitationsReceived ?: 0}">5</p>
+                        </div>
+                        <div class="p-3 transition-colors bg-indigo-100 rounded-xl group-hover:bg-indigo-500">
+                            <svg class="w-6 h-6 text-indigo-600 transition-colors group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Projects - Rose/Pink theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-rose-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Active Projects</p>
+                            <p class="mt-2 text-3xl font-bold text-rose-600" th:text="${activeProjects ?: 0}">3</p>
+                        </div>
+                        <div class="p-3 transition-colors bg-rose-100 rounded-xl group-hover:bg-rose-500">
+                            <svg class="w-6 h-6 transition-colors text-rose-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Projects - Teal theme -->
+                <div class="p-6 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-teal-300 group">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium tracking-wide text-gray-500 uppercase">Total Projects</p>
+                            <p class="mt-2 text-3xl font-bold text-teal-600" th:text="${totalProjects ?: 0}">8</p>
+                        </div>
+                        <div class="p-3 transition-colors bg-teal-100 rounded-xl group-hover:bg-teal-500">
+                            <svg class="w-6 h-6 text-teal-600 transition-colors group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Projects CTA -->
+            <div class="mb-8">
+                <a 
+                th:href="@{/freelancer/jobs/live}"
+                class="flex items-center justify-between p-6 transition-all duration-200 bg-green-400 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.01]">
+                
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">
+                            🌍 Apply for Live Jobs
+                        </h2>
+                        <p class="mt-1 text-sm text-blue-100">
+                            Explore and apply to live freelancing jobs from top platforms.
+                        </p>
+                    </div>
+
+                    <div class="px-5 py-2.5 text-sm font-semibold text-blue-600 bg-white rounded-lg shadow">
+                        Explore →
+                    </div>
+
+                </a>
+            </div>
+
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <!-- Ongoing Projects -->
+                <div class="space-y-5 lg:col-span-2">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Ongoing Projects</h2>
+                        <a href="#" class="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700">View all</a>
+                    </div>
+
+                    <!-- Project Cards or Empty State -->
+                    <div th:if="${ongoingProjects == null or ongoingProjects.isEmpty()}" class="p-8 text-center bg-white border border-gray-200 rounded-xl">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <p class="text-lg font-medium text-gray-900">No Projects Worked On Till Now</p>
+                        <p class="mt-1 text-sm text-gray-500">Start accepting projects to see them here</p>
+                        <a href="/freelancer/findProjects" class="inline-block px-4 py-2 mt-4 text-sm font-medium text-white transition-all bg-blue-600 rounded-lg hover:bg-blue-700">
+                            Browse Projects
+                        </a>
+                    </div>
+
+                    <th:block th:if="${ongoingProjects != null and !ongoingProjects.isEmpty()}">
+                    <th:block th:each="project : ${ongoingProjects}">
+                        <div class="relative p-5 overflow-hidden transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-lg">
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b" 
+                                 th:classappend="${project.status == 'In Progress' ? 'from-amber-400 to-orange-500' : 'from-emerald-400 to-teal-500'}"></div>
+                            <div class="flex flex-col justify-between gap-4 pl-4 md:flex-row md:items-center">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-lg font-semibold text-gray-900" th:text="${project.title}">Project Title</h3>
+                                        <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full border"
+                                              th:classappend="${project.status == 'In Progress' ? 'text-amber-700 bg-amber-100 border-amber-200' : 'text-emerald-700 bg-emerald-100 border-emerald-200'}">
+                                            <span class="w-1.5 h-1.5 mr-1.5 rounded-full animate-pulse"
+                                                  th:classappend="${project.status == 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
+                                            <span th:text="${project.status}">Status</span>
+                                        </span>
+                                    </div>
+                                    <p class="mb-2 text-sm text-gray-400" th:text="'Created ' + ${#dates.format(project.createdDate, 'MMM dd, yyyy')}">Created Date</p>
+                                    <p class="text-sm text-gray-600 line-clamp-2" th:text="${project.description}">Project Description</p>
+                                </div>
+                                <a th:href="@{/freelancer/projects/{id}(id=${project.id})}" class="px-4 py-2 text-sm font-medium transition-all border rounded-lg whitespace-nowrap"
+                                   th:classappend="${project.status == 'In Progress' ? 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100' : 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100'}">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </th:block>
+                    </th:block>
+
+                    <!-- Weekly Earnings Chart - Clean card -->
+                    <div class="relative p-5 mt-6 overflow-hidden bg-white border border-gray-200 rounded-xl">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+                        <h3 class="pt-2 mb-4 text-lg font-semibold text-gray-900">Weekly Earnings</h3>
+                      <div class="h-64">
+    <canvas id="weeklyEarningsChart" class="w-full h-full"></canvas>
+</div>
+
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="space-y-5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Recent Reviews</h2>
+                        <a th:href="@{/freelancer/reviews/{id}(id=${freelancer.id})}" class="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700">View all</a>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div th:if="${reviews == null or reviews.isEmpty()}" class="p-6 text-center bg-white border border-gray-200 rounded-xl">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2h-3l-4 4z"/>
+                        </svg>
+                        <p class="text-gray-600">No reviews yet</p>
+                        <p class="text-sm text-gray-500">Complete projects to receive reviews</p>
+                    </div>
+
+                    <!-- Dynamic Reviews Loop -->
+                    <th:block th:if="${reviews != null and !reviews.isEmpty()}">
+                    <div th:each="review : ${reviews}" class="p-4 transition-all duration-200 bg-white border border-gray-200 rounded-xl hover:shadow-md hover:border-amber-200 group">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2.5 bg-amber-100 rounded-xl group-hover:bg-amber-500 transition-colors">
+                                <svg class="w-5 h-5 transition-colors text-amber-600 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900" th:text="${review.project != null ? review.project.title : 'Project Review'}">Project Title</p>
+                                <p class="mt-1 text-xs text-gray-500" th:text="${review.reviewer != null ? review.reviewer.name + ' • ' : ''} + ${#temporals.format(review.createdAt, 'MMM dd')}" >Reviewer • Date</p>
+                                <p class="mt-2 text-sm text-gray-600 line-clamp-2" th:text="${review.comment}">Review comment</p>
+                            </div>
+                        </div>
+                    </div>
+                    </th:block>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart with colorful gradient bars -->
+
+  <th:block layout:fragment="analyticsscripts">
+
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById('weeklyEarningsChart');
+    const ctx = canvas.getContext('2d');
+
+    // Use dynamic data from server, fallback to empty if not provided
+    const weeklyData = /*[[${weekly != null ? weekly : T(java.util.Arrays).asList(0,0,0,0,0,0,0)}]]*/ [0, 0, 0, 0, 0, 0, 0];
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Earnings (₹)',
+                data: weeklyData,
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+
+                    if (!chartArea) return null;
+
+                    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+                    gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.8)');
+                    gradient.addColorStop(1, 'rgba(236, 72, 153, 0.7)');
+                    return gradient;
+                },
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+});
+</script>
+
+</th:block>
+  
+
+</body>
+</html>

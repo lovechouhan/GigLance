@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Home Page</title>
+</head>
+
+<body>
+        <section layout:fragment="content" class="py-8">
+<!-- Updated browse projects page to purple/coral/lavender palette -->
+<div class="min-h-screen bg-[#FAFAFA] p-8">
+  <h1 class="mb-6 text-3xl font-semibold text-slate-900">Browse Projects</h1>
+
+  <!-- Search Bar -->
+  <div class="flex gap-4 mb-6">
+    <input type="text" placeholder="Search projects..." 
+           class="flex-1 p-3 border border-ai-soft rounded-lg bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-[#FF7675] focus:border-[#FF7675]" />
+    <button class="btn-ai px-5 py-2 rounded-lg">
+      Search
+    </button>
+  </div>
+
+  <!-- Projects Grid -->
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    
+    <!-- Project Card -->
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border border-[#A29BFE]">
+      <h2 class="mb-2 text-xl font-semibold text-slate-900">Website Redesign</h2>
+      <p class="mb-3 text-sm text-slate-600">
+        Need a UI/UX designer to redesign an e-commerce website homepage.
+      </p>
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-ai font-medium">₹10,000 - ₹15,000</span>
+        <span class="bg-ai-soft text-ai px-3 py-1 rounded-full text-xs">Web Design</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <button class="text-sm btn-ai px-4 py-2 rounded-lg">
+          Apply
+        </button>
+        <button class="text-sm btn-ai px-3 py-2">
+          View Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Example Project Card -->
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border border-[#A29BFE]">
+      <h2 class="mb-2 text-xl font-semibold text-slate-900">Java Spring Boot API</h2>
+      <p class="mb-3 text-sm text-slate-600">
+        Looking for backend developer to create REST APIs for a finance app.
+      </p>
+        <div class="flex items-center justify-between mb-3">
+        <span class="text-ai font-medium">₹20,000</span>
+        <span class="bg-[#FFE5E5] text-[#FF7675] px-3 py-1 rounded-full text-xs">Backend</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <button class="text-sm btn-ai px-4 py-2 rounded-lg">
+          Apply
+        </button>
+        <button class="text-sm btn-ai px-3 py-2">
+          View Details
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+        </section>
+</body>
+</html>

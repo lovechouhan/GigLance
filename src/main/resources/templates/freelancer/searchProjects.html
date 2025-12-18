@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+  <title>Find Projects | GigLance</title>
+</head>
+
+<body>
+<!-- Light gray background -->
+<div layout:fragment="content" class="min-h-screen p-6 bg-gray-100 md:p-8">
+
+    <!-- Page Header -->
+    <!-- Dark text instead of gradient text -->
+   <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-xl"
+  style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+    <div class="flex items-center gap-4">
+      <div class="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">Search For Projects</h1>
+        <!-- <p class="mt-1 text-sm text-slate-300">Details about the selected project</p> -->
+      </div>
+    </div>
+    <a th:href="@{/freelancer/dashboard/{id}(id=${#authentication.principal.id})}"
+       class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all bg-white rounded-lg text-slate-800 hover:bg-blue-50 hover:shadow-md">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      Back to Dashboard
+    </a>
+  </header>
+
+    <!-- Filter Section -->
+    <!-- Customizable color filter bar -->
+    <div class="p-4 mb-8 shadow-lg rounded-2xl"
+         style="background: linear-gradient(to right, var(--search-bg-color, #1e293b), var(--search-bg-color, #1e293b));">
+      
+      <style>
+        :root {
+          --search-bg-color: #e4e5e6;
+          --search-input-bg: #e2e5eb;
+          --search-input-border: #475569;
+          --search-icon-color: #60a5fa;
+          --search-focus-ring: rgba(96, 165, 250, 0.3);
+          --search-focus-border: #3b82f6;
+        }
+        
+        #searchBox, #categoryFilter {
+          background-color: var(--search-input-bg) !important;
+          border-color: var(--search-input-border) !important;
+          color: #000000 !important;
+        }
+        
+        #searchBox::placeholder, #categoryFilter option {
+          color: #000000 !important;
+        }
+        
+        #searchBox:focus, #categoryFilter:focus {
+          border-color: var(--search-focus-border) !important;
+          box-shadow: 0 0 0 4px var(--search-focus-ring) !important;
+        }
+        
+        #searchBox:hover, #categoryFilter:hover {
+          border-color: #60a5fa !important;
+        }
+        
+        .search-icon-svg {
+          color: var(--search-icon-color);
+        }
+      </style>
+      
+      <div class="flex flex-col gap-4 md:flex-row">
+        <div class="relative flex-shrink-0 md:w-64">
+          <select id="categoryFilter"
+                  class="w-full px-4 py-3 font-medium transition-all duration-200 border-2 appearance-none rounded-xl">
+              <option value="">All Categories</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Mobile Apps">Mobile Apps</option>
+              <option value="UI/UX Design">UI/UX Design</option>
+              <option value="Content Writing">Content Writing</option>
+              <option value="App Development">App Development</option>
+              <option value="AIML">AIML</option>
+              <option value="Software Development">Software Development</option>
+              <option value="Graphic Design">Graphic Design</option>
+              <option value="Digital Marketing">Digital Marketing</option>
+          </select>
+        </div>
+        <div class="relative flex-1">
+          <input id="searchBox"
+            type="text"
+            placeholder="Search projects by title..."
+            class="w-full px-4 py-3 font-medium leading-normal transition-all duration-200 border-2 rounded-xl" />
+        </div>
+      </div>
+    </div>
+
+    <!-- No Projects -->
+    <div th:if="${projects == null or #lists.isEmpty(projects)}"
+         class="p-12 text-center bg-white border border-gray-200 shadow-lg rounded-2xl">
+        <div class="flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100">
+          <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <p class="text-lg font-semibold text-slate-700">No projects found</p>
+        <p class="mt-1 text-slate-500">Try adjusting your filters or check back later</p>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="w-full" th:if="${projects != null and !#lists.isEmpty(projects)}">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+            <div class="flex flex-col justify-between h-full overflow-hidden transition-all duration-300 bg-white border border-gray-200 shadow-lg project-card rounded-2xl hover:shadow-2xl hover:-translate-y-2 group"
+                 th:each="project : ${projects}"
+                 th:attr="data-category=${project.category}, data-title=${project.title}">
+
+                <!-- Dark solid header bar -->
+                <div class="h-2 bg-blue-500"></div>
+
+                <div class="flex-1 p-6">
+                    <!-- Category Badge & Status Badge -->
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <!-- Category Badge -->
+                        <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold text-blue-700 uppercase bg-blue-100 rounded-full"
+                              th:text="${project.category}">
+                        </span>
+                        
+                        <!-- Status Badge -->
+                        <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase rounded-full"
+                              th:text="${project.status}"
+                              th:classappend="${project.status == 'OPEN'} ? 'text-blue-700 bg-blue-100' : (${project.status == 'IN_PROGRESS'} ? 'text-amber-700 bg-amber-100' : 'text-emerald-700 bg-emerald-100')">
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h2 class="mb-4 text-xl font-bold transition-colors duration-200 text-slate-800 group-hover:text-blue-600"
+                        th:text="${project.title}">
+                    </h2>
+
+                    <!-- Project Details -->
+                    <!-- Light colored backgrounds with dark icons -->
+                    <div class="space-y-3 text-sm">
+                        <!-- Budget -->
+                        <div class="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl">
+                          <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                          </div>
+                          <span class="font-bold text-emerald-700" th:text="'₹' + ${project.budget}"></span>
+                        </div>
+
+                        <!-- Posted Date -->
+                        <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
+                          <div class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                          </div>
+                          <span class="font-medium text-slate-700" th:text="${#temporals.format(project.createdAt, 'dd MMM yyyy')}"></span>
+                        </div>
+
+                        <!-- Client -->
+                        <div class="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
+                          <div class="flex items-center justify-center w-8 h-8 bg-purple-600 rounded-lg">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                          </div>
+                          <span class="font-medium text-slate-700" th:text="${'Client: ' + project.client.name}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <!-- Dark footer with solid colored buttons -->
+                <div class="p-4 bg-white border-t border-gray-100">
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <button th:onclick="|openAISummaryModal(${project.id})|"
+                                class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md hover:shadow-lg hover:scale-105"
+                                style="background-color: #ea580c !important;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            AI Summary
+                        </button>
+
+                        <a th:href="@{/freelancer/viewProjectDetails/{id}(id=${project.id})}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg hover:scale-105">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            View
+                        </a>
+
+                        <a th:href="@{/freelancer/sendProposals/{id}(id=${project.id})}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 rounded-lg shadow-md bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:scale-105">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                            Propose
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Filter Script -->
+<th:block layout:fragment="filterscript">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const categoryFilter = document.getElementById("categoryFilter");
+    const searchBox = document.getElementById("searchBox");
+
+    function applyFilters() {
+        const selectedCategory = categoryFilter.value.toLowerCase();
+        const searchText = searchBox.value.toLowerCase();
+        const cards = document.querySelectorAll(".project-card");
+
+        cards.forEach(card => {
+            const category = (card.dataset.category || "").toLowerCase();
+            const title = (card.dataset.title || "").toLowerCase();
+            const categoryMatch = selectedCategory === "" || category === selectedCategory;
+            const searchMatch = searchText === "" || title.includes(searchText);
+
+            if (categoryMatch && searchMatch) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    categoryFilter.addEventListener("change", applyFilters);
+    searchBox.addEventListener("keyup", applyFilters);
+});
+</script>
+</th:block>
+
+</body>
+</html>

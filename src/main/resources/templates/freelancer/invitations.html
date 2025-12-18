@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Invitations</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="min-h-screen p-6 bg-gray-100 text-slate-900">
+
+        <!-- Header -->
+        <header class="flex items-center justify-between p-6 mb-8 bg-slate-800 rounded-2xl"
+         style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+            <div>
+                <h1 class="text-2xl font-bold text-white">Invitations</h1>
+                <p class="text-slate-300">View all your invitations here.</p>
+            </div>
+            <a th:href="@{/freelancer/dashboard/{id}(id=${#authentication.principal.id})}"
+               class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white rounded-lg text-slate-800 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+        <!-- Filter Bar -->
+        <div class="p-4 mb-6 bg-white border border-gray-200 shadow-sm rounded-xl">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                </div>
+                <select id="invitationStatusFilter"
+                        class="px-4 py-2 border border-gray-200 rounded-lg text-slate-700 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Invitations</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="ACCEPTED">Accepted</option>
+                    <option value="REJECTED">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Empty State -->
+            <div th:if="${invitations == null or #lists.isEmpty(invitations)}" class="p-8 text-center bg-white border border-gray-200 shadow-sm rounded-xl">
+                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <p class="mb-2 text-lg font-semibold text-slate-700">No invitations yet</p>
+                <p class="text-sm text-slate-500">You'll see invitations here when clients invite you to bid.</p>
+            </div>
+
+            <!-- Invitation Cards Grid -->
+            <div th:if="${invitations != null and !#lists.isEmpty(invitations)}" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div th:each="inv : ${invitations}"
+                     th:attr="data-status=${inv.status}"
+                     class="flex flex-col h-full overflow-hidden transition-all duration-300 bg-white border border-gray-200 shadow-sm rounded-xl hover:shadow-md">
+
+                    <!-- Card Header -->
+                    <div class="p-4 bg-white">
+                        <div class="flex items-start gap-3">
+                            <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 text-lg font-bold text-white bg-blue-600 rounded-lg">
+                                <span th:text="${inv.client != null && inv.client.name != null ? inv.client.name.substring(0,1) : 'U'}">U</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-base font-semibold text-black truncate" 
+                                    th:text="${inv.projectTitle != null && inv.projectTitle.title != null ? inv.projectTitle.title : 'Untitled'}">
+                                    Project title
+                                </h3>
+                                <p class="text-sm text-black truncate" 
+                                   th:text="${inv.client != null ? inv.client.name : 'Unknown client'}">
+                                   Client name
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="flex flex-col flex-1 p-4">
+                        <!-- Message -->
+                        <p class="mb-4 text-sm leading-relaxed text-slate-600 line-clamp-2" 
+                           th:if="${inv.message != null}" 
+                           th:text="${inv.message}">
+                           Invitation message or brief
+                        </p>
+
+                        <!-- Info Grid -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="p-3 rounded-lg bg-amber-50">
+                                <p class="mb-1 text-xs font-medium text-amber-600">Invited On</p>
+                                <p class="text-sm font-semibold text-slate-800"
+                                   th:text="${inv.createdAt != null ? #temporals.format(inv.createdAt,'dd MMM yyyy') : 'N/A'}">
+                                   12 Nov 2025
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-blue-50" th:if="${inv.projectTitle != null and inv.projectTitle.deadline != null}">
+                                <p class="mb-1 text-xs font-medium text-blue-600">Deadline</p>
+                                <p class="text-sm font-semibold text-slate-800"
+                                   th:text="${#temporals.format(inv.projectTitle.deadline,'dd MMM yyyy')}">
+                                   25 Nov 2025
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="mb-4">
+                            <span th:text="${inv.status != null ? inv.status : 'PENDING'}"
+                                  th:classappend="${inv.status == 'ACCEPTED' ? ' bg-emerald-100 text-emerald-700' : (inv.status == 'REJECTED' ? ' bg-red-100 text-red-700' : ' bg-amber-100 text-amber-700')}"
+                                  class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full"
+                                      th:classappend="${inv.status == 'ACCEPTED' ? ' bg-emerald-500' : (inv.status == 'REJECTED' ? ' bg-red-500' : ' bg-amber-500')}"></span>
+                                PENDING
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-2 mt-auto">
+                            <!-- When project is OPEN and status is PENDING -->
+                            <div th:if="${(inv.status != null ? #strings.equalsIgnoreCase(inv.status,'PENDING') : false) and inv.projectTitle != null and inv.projectTitle.status == 'OPEN'}"
+                                 class="flex flex-col w-full gap-2">
+                                        <a th:href="@{/freelancer/sendProposals/{id}/{invitationId}(id=${inv.projectTitle != null ? inv.projectTitle.id : 0}, invitationId=${inv.id})}"
+                                   class="flex items-center justify-center w-full gap-2 px-3 py-2 text-sm font-medium text-white transition-colors rounded-lg"
+                                   style="background-color: #FF6B35;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#FF6B35'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Place Bid
+                                </a>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <a th:href="@{/invite/client/{id}/{userid}/accept(id=${inv.id},userid=${inv.freelancer != null ? inv.freelancer.id : 0})}"
+                                       class="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-white transition-colors rounded-lg bg-emerald-600 hover:bg-emerald-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Accept
+                                    </a>
+                                    <a th:href="@{/invite/client/{id}/decline(id=${inv.id})}"
+                                       class="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-red-600 transition-colors border border-red-200 rounded-lg bg-red-50 hover:bg-red-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Decline
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- View Details Button -->
+                            <a th:if="${not((inv.status != null ? #strings.equalsIgnoreCase(inv.status,'PENDING') : false) and inv.projectTitle != null and inv.projectTitle.status == 'OPEN')}"
+                               th:href="@{/invite/viewdetails/{id}(id=${inv.id != null ? inv.id : 0})}"
+                               class="flex items-center justify-center w-full gap-2 px-3 py-2 text-sm font-medium text-white transition-colors rounded-lg"
+                               style="background: linear-gradient(to right, #7C3AED, #4C1D95);" onmouseover="this.style.background='linear-gradient(to right, #6D28D9, #3B0764)'" onmouseout="this.style.background='linear-gradient(to right, #7C3AED, #4C1D95)'">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+    
+    <th:block layout:fragment="invitationsfilterscript">  
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filter = document.getElementById("invitationStatusFilter");
+            const cards = document.querySelectorAll("[data-status]");
+
+            filter.addEventListener("change", function () {
+                const selected = this.value.toUpperCase();
+
+                cards.forEach(card => {
+                    const status = (card.dataset.status || "").toUpperCase();
+
+                    if (selected === "" || status === selected) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+    </th:block>
+</body>
+</html>

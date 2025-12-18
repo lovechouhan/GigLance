@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Find Freelancers</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen px-4 py-8 bg-gray-100">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-xl"
+       style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Browse Top Freelancers</h1>
+            <p class="mt-1 text-sm text-slate-300">Discover and connect with the perfect talent for your next project.</p>
+        </div>
+        <a th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition bg-white rounded-lg shadow-md text-slate-800 hover:bg-gray-100 hover:shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Search Box -->
+    <div class="w-full mx-auto mb-8">
+        <div class="relative">
+            
+            <input id="searchBox"
+                   type="text"
+                   placeholder="Search by freelancer name..."
+                   class="w-full py-3 pl-12 pr-4 transition border border-gray-200 shadow-sm bg-gray rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+    </div>
+
+    <!-- Grid List -->
+    <div class="grid max-w-full grid-cols-1 gap-6 mx-auto sm:grid-cols-2 lg:grid-cols-3">
+
+        <div th:each="freelancer : ${freelancers}"
+             data-freelancer-card
+             class="overflow-hidden transition-all duration-300 bg-white shadow-md rounded-xl hover:shadow-xl">
+
+            <!-- Card Header -->
+            <div class="p-4">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-4">
+                        <img th:src="@{/images/image.png}"
+                             class="object-cover border-2 border-blue-400 rounded-full shadow-md w-14 h-14" />
+                        <div>
+                            <h2 class="text-lg font-bold text-black" th:text="${freelancer.name}"></h2>
+                            <p class="text-sm text-black"
+                               th:text="${freelancer.designation != null ? freelancer.designation : 'Freelancer'}"></p>
+                        </div>
+                    </div>
+                    <!-- Rating -->
+                    <span class="flex items-center gap-1 px-3 py-1 text-sm font-semibold rounded-full text-amber-800 bg-amber-100">
+                        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span th:text="${freelancer.rating != null ? freelancer.rating : '0.0'}"></span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-5">
+                <!-- Contact Info -->
+                <div class="mb-4 space-y-2">
+                    <div class="flex items-center gap-2 text-sm text-slate-600">
+                        <div class="flex items-center justify-center w-8 h-8 border border-blue-100 rounded-lg bg-blue-50">
+                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span th:text="${freelancer.email}"></span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-600">
+                        <div class="flex items-center justify-center w-8 h-8 border rounded-lg bg-emerald-50 border-emerald-100">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </div>
+                        <span th:text="${freelancer.phone}"></span>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div>
+                    <h3 class="mb-2 text-xs font-semibold tracking-wide uppercase text-slate-500">Top Skills</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="skill : ${freelancer.skills}"
+                              th:text="${skill}"
+                              class="px-3 py-1 text-xs font-medium border rounded-full bg-slate-100 text-slate-700 border-slate-200"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="px-5 pb-5">
+                <div class="flex gap-2">
+                    <a th:href="@{/client/freelancer/viewprofile/{id}(id=${freelancer.id})}"
+                       class="flex-1 px-3 py-2 text-sm font-medium text-center text-white transition bg-blue-600 rounded-lg shadow-sm hover:bg-blue-700 hover:shadow-blue-500/30">
+                        View Profile
+                    </a>
+                    <a th:href="@{/freelancer/reviews/{id}(id=${freelancer.id})}"
+                       class="flex-1 px-3 py-2 text-sm font-medium text-center text-white transition bg-orange-500 rounded-lg shadow-sm hover:bg-orange-700 hover:shadow-orange-500/30">
+                        Reviews
+                    </a>
+                    <a th:href="@{/invite/client/{id}/{freelancerId}(id=${loggedInUser.id}, freelancerId=${freelancer.id})}"
+                       class="flex-1 px-3 py-2 text-sm font-medium text-center text-white transition rounded-lg shadow-sm bg-emerald-600 hover:bg-emerald-700 hover:shadow-emerald-500/30">
+                        Invite
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="freelancerfilterscript">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const searchBox = document.getElementById("searchBox");
+    const cards = document.querySelectorAll("[data-freelancer-card]");
+
+    searchBox.addEventListener("input", () => {
+        const q = searchBox.value.toLowerCase();
+        cards.forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(q) ? "block" : "none";
+        });
+    });
+});
+</script>
+</th:block>
+
+</body>
+</html>

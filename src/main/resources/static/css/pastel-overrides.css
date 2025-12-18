@@ -1,0 +1,193 @@
+/* 
+  UPDATED & SAFE pastel theme
+  --------------------------------------------------------------
+  ✔ Scoped only inside `.pastel-theme`
+  ✔ Does NOT override Tailwind utilities globally
+  ✔ Dashboard is untouched (because we use `.dashboard-clean`)
+  ✔ No more UI conflicts
+  --------------------------------------------------------------
+*/
+
+.pastel-theme {
+
+  /* Root palette */
+  --theme-sidebar-start: #3B0F5F;
+  --theme-sidebar-end: #6C2BE7;
+
+  --theme-ai-start: #0f62fe;
+  --theme-ai-end: #3aa0ff;
+
+  --theme-secondary-bg: #DDEFF6;
+  --theme-accent: #00C4CC;
+  --theme-highlight: #FFFFFF;
+
+  --theme-card: #F3FBFF;
+  --theme-card-2: #F3E8FF;
+
+  --theme-text: #0A2540;
+  --theme-muted: #6B7280;
+}
+
+
+/* ------------------------------------------
+   Base styling (scoped inside .pastel-theme)
+------------------------------------------- */
+
+.pastel-theme body {
+  background-color: var(--theme-secondary-bg);
+  color: var(--theme-text);
+}
+
+/* Headings */
+.pastel-theme h1,
+.pastel-theme h2,
+.pastel-theme h3,
+.pastel-theme h4 {
+  color: var(--theme-text);
+}
+
+/* Navbar / header */
+.pastel-theme nav,
+.pastel-theme header {
+  background: linear-gradient(180deg, var(--theme-sidebar-start), var(--theme-sidebar-end));
+  color: var(--theme-highlight);
+}
+
+/* Navbar links */
+.pastel-theme nav a,
+.pastel-theme header a {
+  color: var(--theme-highlight);
+}
+
+.pastel-theme nav a:hover {
+  color: var(--theme-accent);
+}
+
+/* Sidebar */
+.pastel-theme aside,
+.pastel-theme .sidebar {
+  background: linear-gradient(180deg, var(--theme-sidebar-start), var(--theme-sidebar-end));
+  color: var(--theme-highlight);
+}
+
+/* ------------------------------------------
+   Soft Cards (NO overriding Tailwind utilities)
+------------------------------------------- */
+
+.pastel-theme .card-surface {
+  background: var(--theme-card);
+  border: 1px solid rgba(16,24,40,0.05);
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.pastel-theme .card-lavender {
+  background: var(--theme-card-2);
+  border: 1px solid rgba(108,92,231,0.15);
+  border-radius: 14px;
+}
+
+/* ------------------------------------------
+   Buttons (custom classes only)
+------------------------------------------- */
+
+.pastel-theme .btn-primary {
+  background: linear-gradient(180deg, var(--theme-sidebar-end), var(--theme-sidebar-start));
+  color: white;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+}
+
+.pastel-theme .btn-indigo {
+  background: linear-gradient(180deg,#4F46E5,#6366F1);
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+.pastel-theme .btn-muted {
+  background: #E5E7EB;
+  color: #111827;
+  border-radius: 10px;
+}
+
+/* ------------------------------------------
+   Status Badges
+------------------------------------------- */
+
+.pastel-theme .status-open {
+  background: linear-gradient(180deg,var(--theme-ai-start),var(--theme-ai-end));
+  color: white;
+}
+
+.pastel-theme .status-completed {
+  background: linear-gradient(180deg,#10B981,#059669);
+  color: white;
+}
+
+.pastel-theme .status-inprogress {
+  background: linear-gradient(180deg,#F59E0B,#F97316);
+  color:white;
+}
+
+/* ------------------------------------------
+   Inputs
+------------------------------------------- */
+
+.pastel-theme .search-input {
+  background-color: #fff;
+  border: 1px solid rgba(16,24,40,0.08);
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+}
+
+/* ------------------------------------------
+   Recent Activity / Accents
+------------------------------------------- */
+
+.pastel-theme .badge-accent {
+  background-color: var(--theme-accent);
+  color: #fff;
+  border-radius: 9999px;
+  padding: 0.25rem 0.6rem;
+}
+
+
+/* ------------------------------------------------------------
+   DO NOT TOUCH TAILWIND UTILITIES
+   - No bg-white override
+   - No bg-gray override
+   - No text-purple override
+   - No gradient override
+   ------------------------------------------------------------ */
+
+
+/* ------------------------------------------------------------
+   Dashboard Protection Zone
+   Make dashboard work normally (no pastel interference)
+   ------------------------------------------------------------ */
+
+.dashboard-clean,
+.dashboard-clean * {
+  all: revert !important;
+}
+
+/* Force sidebar to use its Tailwind gradient */
+#logo-sidebar {
+  background: linear-gradient(to right, #4c1d95, #9333ea) !important; /* purple-800 → purple-600 */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+}
+
+#logo-sidebar * {
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+
+
+/* NOTE: removed aggressive 'all: unset' for #logo-sidebar because it stripped
+   sidebar styles (made the sidebar appear transparent). Keeping the dashboard
+   protection but allowing the sidebar to retain its intended background. */
+
+/* #logo-sidebar rules intentionally omitted to preserve sidebar styles */

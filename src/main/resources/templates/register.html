@@ -1,0 +1,190 @@
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+        <title>Register | FreelanceHub</title>
+</head>
+
+<body>
+            <section layout:fragment="content" class="flex items-center justify-center min-h-screen py-12 bg-gray-50">
+
+                <div class="w-full max-w-2xl px-6">
+                    <!-- progress -->
+                    <div class="mb-6">
+                        
+                        <div class="w-full h-2 overflow-hidden bg-gray-200 rounded-full">
+                            <div id="progressBar" class="h-2 bg-gradient-to-r from-indigo-500 to-purple-500" style="width:25%"></div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden bg-white shadow-lg rounded-2xl">
+                        <div class="p-8 md:p-10">
+                            <div class="max-w-xl mx-auto mb-6 text-center">
+                                <img th:src="@{/images/ApniDukkan.png}" alt="FreelanceHub" class="mx-auto mb-3 w-14 h-14" />
+                                <h1 class="text-2xl font-extrabold md:text-3xl">Create your account</h1>
+                                <p class="mt-2 text-sm text-gray-500">Fill the form below to register as a freelancer or client</p>
+                            </div>
+
+                            <form th:action="@{/register}" th:object="${user}" enctype="multipart/form-data" method="post" class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input id="name" name="name" type="text" placeholder="John Doe" required
+                                           class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                    <input id="email" name="email" type="email" placeholder="john.doe@example.com" required
+                                           class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number (Optional)</label>
+                                    <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000"
+                                           class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div>
+                                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                                        <input id="password" name="password" type="password" placeholder="Create a strong password" required
+                                               class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                    </div>
+                                    <div>
+                                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                        <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Re-enter your password" required
+                                               class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="role" class="block text-sm font-medium text-gray-700">Register as</label>
+                                    <select id="role" name="role" required class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50">
+                                        <option value="FREELANCER">Freelancer</option>
+                                        <option value="CLIENT">Client</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="bio" class="block text-sm font-medium text-gray-700">Short Bio (optional)</label>
+                                    <textarea id="bio" name="bio" rows="3" class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50"></textarea>
+                                </div>
+
+                                <div class="mt-6 text-center">
+                                    <button type="submit" class="w-full px-8 py-3 font-semibold text-white rounded-lg md:w-auto bg-gradient-to-r from-indigo-500 to-purple-500">Create account</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <script>
+                (function(){
+                    const totalSteps = 4;
+                    let step = 1;
+                    const stepLabel = document.getElementById('stepLabel');
+                    const percentLabel = document.getElementById('percentLabel');
+                    const progressBar = document.getElementById('progressBar');
+                    const pageTitle = document.getElementById('pageTitle');
+                    const pageSubtitle = document.getElementById('pageSubtitle');
+
+                    function updateUI(){
+                        document.querySelectorAll('.step').forEach(el=> el.classList.add('hidden'));
+                        const active = document.querySelector('[data-step="'+step+'"]');
+                        if(active) active.classList.remove('hidden');
+                        const percent = Math.round((step/totalSteps)*100);
+                        progressBar.style.width = percent + '%';
+                        stepLabel.textContent = 'Step ' + step + ' of ' + totalSteps;
+                        percentLabel.textContent = percent + '% Complete';
+                        // Titles for steps
+                        if(step===1){ pageTitle.textContent = "Welcome! Let's get started"; pageSubtitle.textContent = 'Create your account to join our community'; }
+                        if(step===2){ pageTitle.textContent = 'What brings you here?'; pageSubtitle.textContent = 'Choose how you want to use FreelanceHub'; }
+                        if(step===3){ pageTitle.textContent = 'What services do you need?'; pageSubtitle.textContent = 'Select the services you\'re looking for'; }
+                        if(step===4){ pageTitle.textContent = 'Almost there!'; pageSubtitle.textContent = 'Review your details and submit'; populateReview(); }
+                    }
+
+                    function populateReview(){
+                        const review = document.getElementById('review');
+                        if(!review) return;
+                        const data = {
+                            name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
+                            email: document.getElementById('email').value,
+                            company: document.getElementById('company') ? document.getElementById('company').value : '',
+                            project: document.getElementById('project') ? document.getElementById('project').value : '',
+                            services: Array.from(document.querySelectorAll('.serviceChip.selected')).map(b=>b.textContent.trim()).join(', '),
+                            role: (document.querySelector('.roleCard.selected') || {}).dataset?.role || ''
+                        };
+                        review.innerHTML = `
+                            <div><strong>Name:</strong> ${data.name}</div>
+                            <div><strong>Email:</strong> ${data.email}</div>
+                            <div><strong>Role:</strong> ${data.role}</div>
+                            <div><strong>Company:</strong> ${data.company}</div>
+                            <div><strong>Services:</strong> ${data.services}</div>
+                            <div><strong>Project:</strong> <div class="p-3 mt-2 rounded bg-gray-50">${data.project || '—'}</div></div>
+                        `;
+                    }
+
+                            function validateStep(){
+                                // simple validations per step
+                                if(step===1){
+                                    const fn = document.getElementById('firstName').value.trim();
+                                    const ln = document.getElementById('lastName').value.trim();
+                                    const email = document.getElementById('email').value.trim();
+                                    const pwd = document.getElementById('password').value;
+                                    const cpwd = document.getElementById('confirmPassword').value;
+                                    if(!fn || !ln || !email){ alert('Please fill your name and email.'); return false; }
+                                    if(pwd.length < 8){ alert('Password must be at least 8 characters.'); return false; }
+                                    if(pwd !== cpwd){ alert('Passwords do not match.'); return false; }
+                                    return true;
+                                }
+                                if(step===2){
+                                    if(!document.querySelector('.roleCard.selected')){ alert('Please select whether you are a Freelancer or Client.'); return false; }
+                                    return true;
+                                }
+                                if(step===3){
+                                    const selectedServices = document.querySelectorAll('.serviceChip.selected');
+                                    if(selectedServices.length < 1){ alert('Please select at least one service.'); return false; }
+                                    return true;
+                                }
+                                return true;
+                            }
+
+                            document.getElementById('nextBtn').addEventListener('click', ()=>{
+                                if(!validateStep()) return;
+                                if(step < totalSteps) step++; else document.getElementById('multiStepForm').submit();
+                                updateUI();
+                            });
+                    document.getElementById('backBtn').addEventListener('click', ()=>{
+                        if(step>1) step--; updateUI();
+                    });
+
+                    // role cards
+                    document.querySelectorAll('.roleCard').forEach(card=>{
+                        card.addEventListener('click', ()=>{
+                            document.querySelectorAll('.roleCard').forEach(c=>c.classList.remove('selected','ring-2','ring-indigo-300'));
+                            card.classList.add('selected','ring-2','ring-indigo-300');
+                        });
+                    });
+
+                    // service chips
+                    document.querySelectorAll('.serviceChip').forEach(btn=>{
+                        btn.addEventListener('click', ()=>{
+                            btn.classList.toggle('selected');
+                            btn.classList.toggle('bg-indigo-50');
+                            btn.classList.toggle('border-indigo-300');
+                        });
+                    });
+
+                    updateUI();
+                })();
+            </script>
+
+        </body>
+    </html>

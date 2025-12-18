@@ -1,0 +1,91 @@
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Home Page</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+         <div  class="grid min-h-screen grid-cols-1 md:grid-cols-2">
+
+  <!-- Left hero -->
+  <div class="relative hidden bg-center bg-cover md:block" style="background-image: url('/images/gig.jpg');">
+    <div class="absolute inset-0 bg-gradient-to-b from-indigo-600/80 via-blue-600/60 to-indigo-700/70"></div>
+    <div class="relative z-10 px-12 py-20 text-white">
+      <h1 class="mb-4 text-4xl font-extrabold md:text-5xl">Welcome to GigLance</h1>
+      <p class="max-w-xl mb-8 text-lg md:text-xl">Connect with top talent and exciting projects. Your next opportunity awaits.</p>
+
+      <ul class="space-y-6">
+        <li class="flex items-start gap-4">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </span>
+          <span class="text-lg">Find quality projects that match your skills</span>
+        </li>
+        <li class="flex items-start gap-4">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </span>
+          <span class="text-lg">Collaborate with talented professionals</span>
+        </li>
+        <li class="flex items-start gap-4">
+          <span class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </span>
+          <span class="text-lg">Secure payments and trusted platform</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right form -->
+  <div class="flex items-center justify-center bg-white">
+    <div class="w-full max-w-md p-8">
+      <div class="flex justify-center mb-6">
+        <img th:src="@{/images/gig.jpg}" alt="Logo" class="h-17 w-17" />
+      </div>
+      <h2 class="mb-1 text-2xl font-bold text-gray-900">Sign in to your account</h2>
+      <p class="mb-6 text-sm text-gray-500">Welcome ! Please enter your details.</p>
+
+      <!-- <a th:href="@{'/oauth2/authorization/google'}" class="flex items-center justify-center w-full gap-3 py-3 mb-6 border rounded-lg hover:bg-gray-50">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5" />
+        <span class="font-medium">Sign in with Google</span>
+      </a> -->
+
+      <div class="flex items-center my-4">
+        <div class="flex-1 border-t"></div>
+        <div class="px-3 text-sm text-gray-400">Or continue with</div>
+        <div class="flex-1 border-t"></div>
+      </div>
+
+      <form th:action="@{/authenticate}" th:method="post" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input id="email" name="email" type="email" required placeholder="Enter your email" class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">Password
+            <a th:href="@{'/forgot-password'}" class="float-right text-sm text-indigo-600">Forgot password?</a>
+          </label>
+          <input id="password" name="password" type="password" required placeholder="Enter your password" class="block w-full px-4 py-3 mt-1 border rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+       
+        <div>
+          <button type="submit" class="w-full py-3 font-semibold text-white rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500">Sign in</button>
+        </div>
+      </form>
+
+      <p class="mt-6 text-sm text-center text-gray-500">Don't have an account? <a th:href="@{'/register'}" class="font-medium text-indigo-600">Sign up</a></p>
+    </div>
+  </div>
+
+</div>
+    </section>
+</body>
+</html>

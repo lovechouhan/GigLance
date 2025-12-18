@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Home Page</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="min-h-screen p-6 bg-gradient-to-br 
+    from-[#FAFAFA] via-white to-[#F3E8FF] text-slate-900">
+
+        <form th:action="@{/invite/sendInvitation}" method="post" class="max-w-xl p-6 mx-auto bg-white rounded shadow">
+            <input type="hidden" name="id" th:value="${invitationDto != null ? invitationDto.id : ''}" />
+            <h2 class="mb-4 text-xl font-semibold">Send Invitation</h2>
+
+            <div th:if="${successMessage}" class="p-3 mb-4 text-sm text-green-800 bg-green-100 rounded">
+                <span th:text="${successMessage}">Invitation sent successfully!</span>
+            </div>
+            <div th:if="${errorMessage}" class="p-3 mb-4 text-sm text-red-800 bg-red-100 rounded">
+                <span th:text="${errorMessage}">An error occurred</span>
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium">Freelancer</label>
+                <input type="text" th:value="${freelancer != null ? freelancer.name : ''}" readonly class="w-full px-3 py-2 bg-gray-100 border rounded"/>
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium">Client</label>
+                <input type="text" th:value="${client != null ? client.name : ''}" readonly class="w-full px-3 py-2 bg-gray-100 border rounded"/>
+            </div>
+
+           <div class="mb-4">
+    <label class="block mb-1 text-sm font-medium">Project</label>
+    <select name="projectId" class="w-full px-3 py-2 border rounded" required>
+        <option value="" disabled selected>Select a project</option>
+
+        <option th:each="project : ${projects}"
+                th:value="${project.id}"       
+                th:text="${project.title}"
+                th:selected="${invitationDto != null and invitationDto.projectId == project.id}">
+        </option>
+    </select>
+            </div>
+
+         
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium">Message</label>
+                <textarea name="message" rows="6" placeholder="Write a message..." class="w-full px-3 py-2 border rounded" th:text="${invitationDto != null ? invitationDto.message : ''}"></textarea>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="px-4 py-2 text-white bg-indigo-600 rounded">Send Invitation</button>
+            </div>
+        </form>
+
+     
+    </div>
+</body>
+</html>

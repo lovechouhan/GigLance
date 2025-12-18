@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+
+<head>
+    <title>Project Tasks</title>
+</head>
+
+<body>
+
+<div layout:fragment="content" 
+     x-data="{
+         openReviewModal: false,
+         selectedTaskId: '',
+         selectedTaskTitle: '',
+         selectedTaskDesc: '',
+         selectedProjectName: '',
+         selectedFreelancerName: ''
+     }"
+     class="min-h-screen p-6 bg-gray-100">
+
+    <!-- HEADER -->
+    <header class="flex items-center justify-between p-6 mb-8 bg-slate-800 rounded-2xl"style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Task List</h1>
+            <p class="text-white">Manage and track your project tasks</p>
+        </div>
+        <a th:href="@{/freelancer/dashboard}"
+           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium transition bg-white rounded-lg text-slate-800 hover:bg-slate-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- GITHUB REPOSITORY SECTION -->
+    <div class="p-5 mb-6 bg-white border border-gray-200 shadow-sm rounded-2xl">
+        <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-800">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <label class="block mb-2 font-semibold text-slate-700">GitHub Repository</label>
+                <div id="githubInputSection" class="flex gap-2">
+                    <input type="text" 
+                           id="githubRepoInput"
+                           placeholder="https://github.com/username/repo"
+                           class="flex-1 px-4 py-3 transition border rounded-lg border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           th:value="${project.githubUrl}" />
+                    <button onclick="saveGithubRepo()"
+                            class="inline-flex items-center gap-2 px-5 py-3 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Save
+                    </button>
+                </div>
+                
+                <!-- Display saved GitHub link -->
+                <div id="githubLinkDisplay" class="mt-3" th:if="${project.githubUrl}">
+                    <div class="flex items-center gap-3 p-3 border rounded-lg bg-emerald-50 border-emerald-200">
+                        <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <a id="githubUrlLink" 
+                           th:href="${project.githubUrl}"
+                           target="_blank"
+                           class="flex-1 font-medium text-blue-600 truncate hover:underline">
+                            <span th:text="${project.githubUrl}"></span>
+                        </a>
+                        <button onclick="editGithubUrl()" class="p-1 transition rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="mt-2 text-xs text-black">Add the repository link to collaborate and track your project code.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center justify-end gap-3 mb-6">
+        <button onclick="openAiTaskModal()"
+            class="inline-flex items-center gap-2 px-5 py-3 font-semibold text-white transition rounded-xl"
+            style="background-color: #FF6B35;" onmouseover="this.style.backgroundColor='#ea580c'" onmouseout="this.style.backgroundColor='#FF6B35'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Generate Tasks with AI
+        </button>
+
+        <a th:href="@{/freelancer/task/create(projectId=${project.id})}"
+            class="inline-flex items-center gap-2 px-5 py-3 font-semibold text-white transition bg-blue-600 rounded-xl hover:bg-blue-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Add Task
+        </a>
+    </div>
+
+    <!-- TASK LIST -->
+    <div id="taskList" class="space-y-4">
+
+        <div th:each="task : ${tasks}"
+             class="overflow-hidden transition bg-white border border-gray-200 shadow-sm rounded-2xl hover:shadow-md hover:border-blue-200">
+
+            <!-- Task Header -->
+            <div class="p-5 border-b ">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-black" th:text="${task.title}"></h3>
+                    <span class="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium text-purple-100 bg-blue-600 rounded-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                        </svg>
+                        Weightage: <span th:text="${task.taskweightage}"></span>%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Task Body -->
+            <div class="p-5">
+                <div class="flex items-center justify-between">
+                    <!-- Progress -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 px-4 py-2 border border-blue-100 rounded-lg bg-blue-50">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <span class="font-semibold text-blue-700"><span th:text="${task.taskprogress}"></span>% Complete</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center gap-2">
+                        <button 
+                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white transition rounded-lg bg-emerald-600 hover:bg-emerald-700"
+                            @click="
+                                openReviewModal = true;
+                                selectedTaskId = $el.dataset.id;
+                                selectedTaskTitle = $el.dataset.title;
+                                selectedTaskDesc = $el.dataset.desc;
+                                selectedProjectName = $el.dataset.project;
+                                selectedFreelancerName = $el.dataset.freelancer;
+                            "
+                            th:data-id="${task.id}"
+                            th:data-title="${task.title}"
+                            th:data-desc="${task.description}"  
+                            th:data-project="${project.title}"
+                            th:data-freelancer="${task.assignedFreelancer.name}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Send for Review
+                        </button>
+
+                        <button class="inline-flex items-center justify-center w-10 h-10 transition rounded-lg text-slate-400 hover:bg-red-100 hover:text-red-600"
+                           title="Delete task"
+                           th:onclick="'deleteTask(' + ${task.id} + ')'"
+                           type="button">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- REVIEW SUBMISSION MODAL -->
+    <div x-show="openReviewModal"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         x-transition>
+
+        <div class="w-full max-w-lg overflow-hidden bg-white shadow-2xl rounded-2xl"
+             @click.away="openReviewModal = false">
+
+            <div class="p-6 ">
+                <h2 class="text-xl font-bold text-black">Submit Work for Review</h2>
+            </div>
+
+            <div class="p-6">
+                <!-- TASK INFO -->
+                <div class="p-4 mb-4 border border-blue-100 rounded-xl bg-blue-50">
+                    <h3 class="flex items-center gap-2 mb-2 font-semibold text-blue-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        Task Details
+                    </h3>
+                    <p class="text-slate-700"><strong>Task:</strong> <span x-text="selectedTaskTitle"></span></p>
+                    <p class="text-slate-600"><strong>Description:</strong> <span x-text="selectedTaskDesc"></span></p>
+                </div>
+
+                <!-- PROJECT INFO -->
+                <div class="p-4 mb-4 border border-purple-100 rounded-xl bg-purple-50">
+                    <h3 class="flex items-center gap-2 mb-2 font-semibold text-purple-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        Project Details
+                    </h3>
+                    <p class="text-slate-700"><strong>Project:</strong> <span x-text="selectedProjectName"></span></p>
+                    <p class="text-slate-600"><strong>Freelancer:</strong> <span x-text="selectedFreelancerName"></span></p>
+                    <p class="text-slate-600"><strong>GitHub Repo:</strong> 
+                        <a th:href="${project.githubUrl}" target="_blank" class="text-blue-600 hover:underline"
+                           th:text="${project.githubUrl}">GitHub Link</a>
+                    </p>
+                </div>
+
+                <!-- SUBMISSION FORM -->
+                <form th:action="@{/freelancer/task/submit}" method="post">
+
+                    <input type="hidden" name="taskId" x-bind:value="selectedTaskId">
+                    <input type="hidden" name="githubLink" th:value="${project.githubUrl}">
+
+                    <label class="block mb-2 font-semibold text-slate-700">Message</label>
+                    <textarea name="message" class="w-full p-3 transition border rounded-lg border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+
+                    <div class="flex justify-end gap-3 mt-5">
+                        <button type="button"
+                                class="px-5 py-2 font-semibold transition rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200"
+                                @click="openReviewModal = false">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-5 py-2 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                            Send for Review
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- AI TASK GENERATOR MODAL -->
+<div id="aiTaskModal"
+     class="fixed inset-0 z-50 items-center justify-center hidden p-4 bg-black/60 backdrop-blur-sm">
+
+    <div class="w-full max-w-2xl overflow-hidden bg-white shadow-2xl rounded-2xl">
+
+        <div class="p-6 bg-slate-800">
+            <h2 class="flex items-center gap-2 text-xl font-bold text-white">
+                <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Generate Tasks with AI
+            </h2>
+        </div>
+
+        <div class="p-6">
+            <textarea id="aiTaskInput"
+                class="w-full h-40 p-4 transition border rounded-lg border-slate-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Describe your project requirements..."></textarea>
+
+            <div class="flex justify-end gap-3 mt-4">
+                <button onclick="closeAiTaskModal()"
+                    class="px-5 py-2 font-semibold transition rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200">Cancel</button>
+
+                <button onclick="generateAiTasks()"
+                    class="inline-flex items-center gap-2 px-5 py-2 font-semibold text-white transition bg-purple-600 rounded-lg hover:bg-purple-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Generate
+                </button>
+            </div>
+
+            <p id="aiLoader" class="hidden mt-4 font-medium text-center text-purple-600">
+                <svg class="inline w-5 h-5 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating tasks... please wait...
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<th:block layout:fragment="script">
+
+<script>
+function openTaskModal() {
+    document.getElementById("taskModal").classList.remove("hidden");
+    document.getElementById("taskBackdrop").classList.remove("hidden");
+}
+function closeTaskModal() {
+    document.getElementById("taskModal").classList.add("hidden");
+    document.getElementById("taskBackdrop").classList.add("hidden");
+}
+
+function openAiTaskModal() {
+    const modal = document.getElementById("aiTaskModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+function closeAiTaskModal() {
+    const modal = document.getElementById("aiTaskModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+
+function generateAiTasks() {
+    const description = document.getElementById("aiTaskInput").value.trim();
+    const loader = document.getElementById("aiLoader");
+    const projectId = [[${project.id}]];
+
+    loader.classList.remove("hidden");
+
+    fetch(`/freelancer/task/generate/${projectId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description })
+    })
+    .then(res => res.json())
+    .then(data => {
+        loader.classList.add("hidden");
+        closeAiTaskModal();
+        window.location.href = `/freelancer/tasks/${projectId}`;
+    })
+    .catch(err => {
+        loader.classList.add("hidden");
+        console.error(err);
+    });
+}
+
+function loadTasks() {
+    const projectId = [[${project.id}]];
+
+    fetch(`/freelancer/api/tasks/list/${projectId}`)
+        .then(res => res.json())
+        .then(tasks => {
+            const list = document.getElementById("taskList");
+            list.innerHTML = "";
+
+            tasks.forEach(t => {
+                list.innerHTML += `
+                <div class="flex items-center justify-between p-4 bg-white border rounded-xl">
+                    <div>
+                        <h3 class="text-lg font-semibold">${t.title}</h3>
+                    </div>
+                    <span class="px-3 py-1 text-sm text-yellow-700 bg-yellow-100 rounded-full">
+                        ${t.taskprogress}%
+                    </span>
+                </div>
+                `;
+            });
+        });
+}
+
+function saveGithubRepo() {
+    const repoUrl = document.getElementById("githubRepoInput").value.trim();
+    const projectId = [[${project.id}]];
+
+    if (!repoUrl) {
+        alert("Please enter a valid GitHub repository URL");
+        return;
+    }
+
+    if (!repoUrl.startsWith("https://github.com/")) {
+        alert("Please enter a valid GitHub URL (e.g., https://github.com/username/repo)");
+        return;
+    }
+
+    fetch(`/freelancer/project/${projectId}/github`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ githubUrl: repoUrl })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            displayGithubLink(data.githubUrl);
+        } else {
+            alert("Failed to save repository: " + (data.message || "Unknown error"));
+        }
+    })
+    .catch(err => {
+        console.error("Error saving GitHub URL:", err);
+        alert("Error saving GitHub repository");
+    });
+}
+
+function displayGithubLink(githubUrl) {
+    const inputSection = document.getElementById("githubInputSection");
+    let linkDisplay = document.getElementById("githubLinkDisplay");
+    
+    if (!linkDisplay) {
+        const newLinkDisplay = document.createElement("div");
+        newLinkDisplay.id = "githubLinkDisplay";
+        newLinkDisplay.className = "mt-3";
+        newLinkDisplay.innerHTML = `
+            <div class="flex items-center gap-3 p-3 border rounded-lg bg-emerald-50 border-emerald-200">
+                <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <a href="${githubUrl}" target="_blank" class="flex-1 font-medium text-blue-600 truncate hover:underline">
+                    ${githubUrl}
+                </a>
+                <button onclick="editGithubUrl()" class="p-1 transition rounded text-slate-500 hover:text-slate-700 hover:bg-slate-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        inputSection.parentNode.insertBefore(newLinkDisplay, inputSection.nextSibling);
+    } else {
+        const linkElement = linkDisplay.querySelector("a");
+        linkElement.href = githubUrl;
+        linkElement.textContent = githubUrl;
+    }
+}
+
+function editGithubUrl() {
+    const input = document.getElementById("githubRepoInput");
+    input.focus();
+    input.select();
+}
+
+// Delete task via API
+function deleteTask(taskId) {
+    if (!confirm('Are you sure you want to delete this task?')) {
+        return;
+    }
+
+    fetch(`/freelancer/api/task/${taskId}/delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Task deleted successfully!");
+            location.reload();
+        } else {
+            alert("Error: " + (data.error || "Failed to delete task"));
+        }
+    })
+    .catch(err => {
+        console.error("Delete error:", err);
+        alert("Error: " + err.message);
+    });
+}
+</script>
+
+</th:block>
+
+</body>
+</html>

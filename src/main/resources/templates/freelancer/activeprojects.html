@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{base}">
+<head>
+    <title>Active Projects</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-indigo-50 to-teal-50">
+          <h2 class="mb-6 text-2xl font-semibold text-slate-900">Active Projects</h2>
+
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+            <div class="p-5 transition bg-white border shadow-md border-slate-200 rounded-2xl hover:shadow-lg hover:border-indigo-400">
+              <h3 class="text-lg font-semibold text-slate-900">E-commerce Web App</h3>
+              <p class="mt-1 text-sm text-slate-600">Client: John Carter</p>
+              <p class="mt-4 text-sm font-medium text-slate-700">Tech Stack:</p>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="px-2 py-1 text-xs text-indigo-700 bg-indigo-100 rounded-md">React</span>
+                <span class="px-2 py-1 text-xs text-teal-700 bg-teal-100 rounded-md">Node.js</span>
+                <span class="px-2 py-1 text-xs text-purple-700 bg-purple-100 rounded-md">MongoDB</span>
+              </div>
+              <div class="mt-5">
+                <div class="flex justify-between mb-1 text-sm text-slate-700">
+                  <span>Progress</span>
+                  <span>65%</span>
+                </div>
+                <input type="range" value="65" min="0" max="100" class="w-full cursor-pointer accent-indigo-600" />
+              </div>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-xs text-slate-500">Deadline: 15 Feb 2025</span>
+                <button class="px-4 py-2 text-sm text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700">View</button>
+              </div>
+            </div>
+
+            <div class="p-5 transition bg-white border shadow-md border-slate-200 rounded-2xl hover:shadow-lg hover:border-indigo-400">
+              <h3 class="text-lg font-semibold text-slate-900">Fitness Mobile App</h3>
+              <p class="mt-1 text-sm text-slate-600">Client: Sarah Wilson</p>
+              <p class="mt-4 text-sm font-medium text-slate-700">Tech Stack:</p>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="px-2 py-1 text-xs rounded-md text-amber-700 bg-amber-100">Flutter</span>
+                <span class="px-2 py-1 text-xs text-red-700 bg-red-100 rounded-md">Firebase</span>
+              </div>
+              <div class="mt-5">
+                <div class="flex justify-between mb-1 text-sm text-slate-700">
+                  <span>Progress</span>
+                  <span>40%</span>
+                </div>
+                <input type="range" value="40" min="0" max="100" class="w-full cursor-pointer accent-indigo-600" />
+              </div>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-xs text-slate-500">Deadline: 02 Mar 2025</span>
+                <button class="px-4 py-2 text-sm text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700">View</button>
+              </div>
+            </div>
+
+            <div class="p-5 transition bg-white border shadow-md border-slate-200 rounded-2xl hover:shadow-lg hover:border-indigo-400">
+              <h3 class="text-lg font-semibold text-slate-900">Landing Page + SEO</h3>
+              <p class="mt-1 text-sm text-slate-600">Client: DigitalSpark</p>
+              <p class="mt-4 text-sm font-medium text-slate-700">Tech Stack:</p>
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="px-2 py-1 text-xs text-indigo-700 bg-indigo-100 rounded-md">HTML</span>
+                <span class="px-2 py-1 text-xs rounded-md text-cyan-700 bg-cyan-100">Tailwind</span>
+                <span class="px-2 py-1 text-xs text-teal-700 bg-teal-100 rounded-md">SEO</span>
+              </div>
+              <div class="mt-5">
+                <div class="flex justify-between mb-1 text-sm text-slate-700">
+                  <span>Progress</span>
+                  <span>90%</span>
+                </div>
+                <input type="range" value="90" min="0" max="100" class="w-full cursor-pointer accent-indigo-600" />
+              </div>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-xs text-slate-500">Deadline: 28 Jan 2025</span>
+                <button class="px-4 py-2 text-sm text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700">View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</body>
+</html>

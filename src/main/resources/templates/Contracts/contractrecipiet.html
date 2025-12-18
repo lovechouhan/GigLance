@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Contract Agreement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @media print {
+            nav { display: none !important; }
+            .navbar { display: none !important; }
+            [class*="navbar"] { display: none !important; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+        }
+        .signature-canvas {
+            touch-action: none;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <!-- Download Button -->
+    <div class="max-w-4xl p-4 mx-auto no-print">
+        <button onclick="window.print()"
+                class="flex items-center gap-2 px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Download PDF
+        </button>
+    </div>
+
+    <!-- Contract Box -->
+    <div class="max-w-4xl mx-auto my-6 overflow-hidden bg-white rounded-lg shadow-lg">
+
+        <!-- Header -->
+        <div class="px-8 py-6 text-white bg-blue-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">SERVICE CONTRACT</h1>
+                    <p class="text-slate-300">Agreement for Freelance Services</p>
+                </div>
+
+                <div class="text-right">
+                    <p class="text-sm text-slate-300">Contract ID</p>
+                    <p class="font-mono text-xl font-semibold" th:text="'#' + ${contract.id}">#001</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="flex items-center justify-between px-8 py-4 border-b bg-slate-50 border-slate-200">
+
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-slate-600">Status:</span>
+
+                <span th:classappend="${contract.status.name()=='ACTIVE'     ? 'bg-green-100 text-green-800' :
+                                       (contract.status.name()=='COMPLETED'  ? 'bg-blue-100 text-blue-800' :
+                                       (contract.status.name()=='CANCELLED'  ? 'bg-red-100 text-red-800' :
+                                                                               'bg-yellow-100 text-yellow-800'))}"
+                      class="px-3 py-1 text-sm font-medium rounded-full"
+                      th:text="${contract.status}">
+                    NOT_STARTED
+                </span>
+            </div>
+
+            <div class="text-sm text-slate-500">
+                <span>Created: </span>
+                <span th:text="${#temporals.format(contract.createdAt, 'MMM dd, yyyy')}">
+                    Jan 01, 2025
+                </span>
+            </div>
+        </div>
+
+        <!-- Parties -->
+        <div class="grid grid-cols-2 gap-8 px-8 py-6 border-b border-slate-200">
+
+            <!-- Client -->
+            <div class="p-5 rounded-lg bg-slate-50">
+                <h3 class="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-500">Client</h3>
+                <p class="text-lg font-semibold text-slate-800" th:text="${contract.client.name}">
+                    Client Name
+                </p>
+                <p class="text-sm text-slate-600" th:text="${contract.client.email}">
+                    client@email.com
+                </p>
+                <p class="text-sm text-slate-600" th:if="${contract.client.phone}"
+                   th:text="${contract.client.phone}"></p>
+            </div>
+
+            <!-- Freelancer -->
+            <div class="p-5 rounded-lg bg-slate-50">
+                <h3 class="mb-3 text-xs font-semibold tracking-wider uppercase text-slate-500">Freelancer</h3>
+                <p class="text-lg font-semibold text-slate-800" th:text="${contract.freelancer.name}">
+                    Freelancer Name
+                </p>
+                <p class="text-sm text-slate-600" th:text="${contract.freelancer.email}">
+                    freelancer@mail.com
+                </p>
+                <p class="text-sm text-slate-600" th:if="${contract.freelancer.phone}"
+                   th:text="${contract.freelancer.phone}"></p>
+            </div>
+
+        </div>
+
+        <!-- Project Details -->
+        <div class="px-8 py-6 border-b border-slate-200">
+            <h3 class="mb-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Project Details</h3>
+
+            <div class="p-5 border border-blue-100 rounded-lg bg-blue-50">
+                <h4 class="text-xl font-semibold text-slate-800" th:text="${contract.project.title}">
+                    Project Title
+                </h4>
+                <p class="mt-2 text-slate-600" th:text="${contract.project.description}">
+                    Description...
+                </p>
+            </div>
+        </div>
+
+        <!-- Contract Terms -->
+        <div class="px-8 py-6 border-b border-slate-200">
+            <h3 class="mb-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Contract Terms</h3>
+
+            <div class="grid grid-cols-3 gap-6">
+                <div class="p-4 text-center rounded-lg bg-slate-50">
+                    <p class="text-sm text-slate-500">Start Date</p>
+                    <p class="text-lg font-semibold text-slate-800"
+                       th:text="${#temporals.format(contract.startDate,'MMM dd, yyyy')}"></p>
+                </div>
+
+                <div class="p-4 text-center rounded-lg bg-slate-50">
+                    <p class="text-sm text-slate-500">End Date</p>
+                    <p class="text-lg font-semibold text-slate-800"
+                       th:text="${#temporals.format(contract.endDate,'MMM dd, yyyy')}"></p>
+                </div>
+
+                <div class="p-4 text-center rounded-lg bg-green-50">
+                    <p class="text-sm text-slate-500">Contract Amount</p>
+                    <p class="text-2xl font-bold text-green-600"
+                       th:text="'₹' + ${#numbers.formatDecimal(contract.amount,1,2)}">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="px-8 py-6 border-b border-slate-200">
+            <h3 class="mb-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Payment Information</h3>
+
+            <div class="flex items-center gap-8">
+
+                <div>
+                    <p class="text-sm text-slate-500">Payment Method</p>
+                    <p class="flex items-center gap-2 mt-1 text-lg font-semibold text-slate-800">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        <span th:text="${contract.paymentMethod}"></span>
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-slate-500">Payment Status</p>
+                    <span th:classappend="${contract.paymentStatus.name() == 'COMPLETED' ? 'bg-green-100 text-green-800' : (contract.paymentStatus.name() == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 'bg-slate-100 text-slate-800')}"
+                          class="px-3 py-1 text-sm font-medium rounded-full"
+                          th:text="${contract.paymentStatus}"></span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Proposal Reference -->
+        <div class="px-8 py-6 border-b border-slate-200" th:if="${contract.proposal}">
+            <h3 class="mb-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Proposal Reference</h3>
+            <p class="text-slate-600">
+                <span class="font-medium">Proposal ID:</span>
+                <span th:text="${contract.proposal.id}"></span>
+            </p>
+        </div>
+
+        <!-- Terms -->
+        <div class="px-8 py-6 border-b border-slate-200">
+            <h3 class="mb-4 text-xs font-semibold tracking-wider uppercase text-slate-500">Terms & Conditions</h3>
+            <ol class="space-y-2 text-sm list-decimal list-inside text-slate-600">
+                <li>The freelancer agrees to complete the project as per the specifications provided.</li>
+                <li>Payment will be released upon successful completion and approval of deliverables.</li>
+                <li>Both parties agree to maintain confidentiality.</li>
+                <li>Any disputes will be resolved through mutual discussion.</li>
+                <li>This contract is binding until completion or termination.</li>
+            </ol>
+        </div>
+
+        <!-- Digital Signatures -->
+      <!-- Digital Signatures -->
+<div class="px-8 py-8">
+    <h3 class="mb-6 text-xs font-semibold tracking-wider uppercase text-slate-500">Digital Signatures</h3>
+
+    <div class="grid grid-cols-2 gap-8">
+
+        <!-- CLIENT SIGNATURE -->
+        <div class="p-4 border rounded-lg border-slate-200">
+            <p class="font-semibold text-slate-800" th:text="${contract.client.name}"></p>
+            <p class="mb-3 text-sm text-slate-500">Client Signature</p>
+
+            <div class="flex items-center justify-center mb-3 border-2 border-dashed rounded-lg bg-slate-50 border-slate-300">
+
+                <!-- If SIGNATURE IS SAVED -->
+                <img th:if="${contract.clientSignature != null}"
+                     th:src="${'data:image/png;base64,' + contract.clientSignature}"
+                     class="object-contain max-h-32"/>
+
+                <!-- If SIGNATURE NOT SAVED → show canvas -->
+                <canvas th:if="${contract.clientSignature == null}"
+                        id="clientSignature"
+                        class="w-full h-32 signature-canvas"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between">
+
+                <p class="text-xs text-slate-500">
+                    Date:
+                    <span th:text="${contract.clientSignedAt != null ? #temporals.format(contract.clientSignedAt,'MMM dd, yyyy HH:mm') : 'Not Signed'}"></span>
+                </p>
+
+                <div class="flex gap-2 no-print">
+
+                    <!-- <button class="px-3 py-1 text-xs bg-gray-200 rounded"
+                            onclick="clearSignature('client')">Clear</button>
+
+                    <button th:if="${contract.clientSignature == null}"
+                            onclick="saveSignature('client', [[${contract.id}]])"
+                            class="px-3 py-1 text-xs text-white bg-blue-600 rounded">
+                        Save Signature
+                    </button> -->
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FREELANCER SIGNATURE -->
+        <div class="p-4 border rounded-lg border-slate-200">
+            <p class="font-semibold text-slate-800" th:text="${contract.freelancer.name}"></p>
+            <p class="mb-3 text-sm text-slate-500">Freelancer Signature</p>
+
+            <div class="flex items-center justify-center mb-3 border-2 border-dashed rounded-lg bg-slate-50 border-slate-300">
+
+                <!-- Show saved signature -->
+                <img th:if="${contract.freelancerSignature != null}"
+                     th:src="${'data:image/png;base64,' + contract.freelancerSignature}"
+                     class="object-contain max-h-32"/>
+
+                <!-- Show canvas only if NOT signed -->
+                <canvas th:if="${contract.freelancerSignature == null}"
+                        id="freelancerSignature"
+                        class="w-full h-32 signature-canvas"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between">
+
+                <p class="text-xs text-slate-500">
+                    Date:
+                    <span th:text="${contract.freelancerSignedAt != null ? #temporals.format(contract.freelancerSignedAt,'MMM dd, yyyy HH:mm') : 'Not Signed'}"></span>
+                </p>
+
+                <div class="flex gap-2 no-print">
+
+                    <!-- <button class="px-3 py-1 text-xs bg-gray-200 rounded"
+                            onclick="clearSignature('freelancer')">Clear</button>
+
+                    <button th:if="${contract.freelancerSignature == null}"
+                            onclick="saveSignature('freelancer', [[${contract.id}]])"
+                            class="px-3 py-1 text-xs text-white bg-blue-600 rounded">
+                        Save Signature
+                    </button> -->
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+        <!-- Footer -->
+        <div class="px-8 py-4 text-center bg-slate-100">
+            <p class="text-xs text-slate-500">
+                This contract was generated on
+                <span th:text="${#temporals.format(contract.createdAt,'MMMM dd, yyyy ''at'' HH:mm')}"></span>
+                |Deadline:
+              <span th:text="${#temporals.format(contract.deadline, 'MMM dd, yyyy')}"></span>
+
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Signature Script -->
+
+
+</body>
+</html>

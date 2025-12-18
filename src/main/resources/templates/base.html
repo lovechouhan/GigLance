@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GigLance | Freelancing Platform</title>
+
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" th:href="@{/css/output.css}">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  
+
+
+  <!-- Alpine.js for interactivity -->
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.1/cdn.min.js"></script> -->
+
+  
+
+
+
+</head>
+
+<body class="relative min-h-screen overflow-x-hidden text-gray-800">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-transparent">
+    <div th:if="${loggedInUser}">
+      <div class="h-16" th:replace="~{navbar :: navbar}"></div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <div th:if="${loggedInUser != null}">
+    <div th:if="${userRole == 'ROLE_CLIENT'}">
+      <div th:replace="~{client/clientsidebar :: sidebar}"></div>
+    </div>
+    <div th:if="${userRole == 'ROLE_FREELANCER'}">
+      <div th:replace="~{freelancer/lancersidebar :: sidebar}"></div>
+    </div>
+    <div th:if="${userRole == 'ROLE_ADMIN'}">
+      <div th:replace="~{admin/adminsidebar :: adminbar}"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+    <main id="main-content" layout:fragment="content"
+      class="flex-1 min-h-screen p-6 ml-0 transition-all duration-300 bg-ai-soft">
+</main>
+
+
+  <!-- Footer -->
+  <footer class="py-6 mt-10 text-sm text-center text-gray-500 bg-transparent border-t border-transparent">
+    © 2025 <span class="font-medium text-emerald-600">GigLance</span>. All rights reserved.
+    
+  </footer>
+  <!-- Freelancer Modal -->
+<!-- FREELANCER GLASS MODAL -->
+
+<!-- FREELANCER MODAL (PURPLE THEME + BLUR) -->
+<!-- BIG PROFILE MODAL -->
+<!-- FREELANCER MODAL OVERLAY -->
+<div id="freelancerModal"
+        class="fixed inset-0 z-50 items-center justify-center hidden bg-black/40 backdrop-blur-sm max-h-[90vh] overflow-y-auto shadow-xl">
+
+    <!-- MODAL BOX -->
+    <div class="relative w-full max-w-5xl p-8 rounded-2xl bg-white shadow-2xl animate-modal max-h-[90vh] overflow-hidden">
+
+        <!-- CLOSE BUTTON -->
+        <button onclick="closeFreelancerModal()" type="button" aria-label="Close modal"
+            class="absolute z-50 inline-flex items-center justify-center w-10 h-10 text-white btn-ai rounded-full shadow-lg top-6 right-6 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-[#9ad6ff]">
+            <span class="text-2xl leading-none">✕</span>
+        </button>
+
+        <h2 class="mb-6 text-3xl font-extrabold text-ai">
+          Freelancer Profile
+        </h2>
+
+        <!-- AJAX INJECTED CONTENT (scrollable inner area) -->
+        <div id="freelancerContent" class="max-h-[72vh] overflow-y-auto pr-2"></div>
+    </div>
+</div>
+
+<style>
+@keyframes modal {
+    from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-modal {
+    animation: modal 0.25s ease-out;
+}
+</style>
+
+<style>
+/* Simple spinner for loading states */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 28px; height: 28px; border: 4px solid rgba(0,0,0,0.08); border-top-color: rgba(10,80,200,0.9); border-radius: 9999px; animation: spin 0.9s linear infinite; }
+.spinner-center { display:flex; align-items:center; gap:0.5rem; }
+</style>
+
+
+<!-- payment modal -->
+<div id="payment-backdrop" class="fixed inset-0 hidden bg-black/40 backdrop-blur-sm"></div>
+
+<!-- PAYMENT CONFIRMATION DIALOG -->
+<div id="payment-dialog" class="fixed inset-0 flex items-center justify-center hidden">
+  <div class="w-full max-w-md p-6 bg-white shadow-xl rounded-xl">
+
+    <div class="flex items-center gap-3 mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           class="w-6 h-6 text-indigo-600"
+           fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 110 20 10 10 0 010-20z" />
+      </svg>
+      <h2 class="text-lg font-semibold text-gray-800">Proceed to Payment?</h2>
+    </div>
+
+    <p class="mb-6 text-gray-600">
+      By accepting this proposal, you will be redirected to the payment page.
+    </p>
+
+    <div class="flex justify-end gap-3">
+      <button onclick="closePaymentDialog()"
+              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
+        Cancel
+      </button>
+
+     <button id="proceedPaymentBtn"
+        onclick="startPayment()"
+        class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+  Proceed
+</button>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+ <!-- AI SUMMARY MODAL -->
+<!-- BACKDROP -->
+<div id="aiModalBackdrop" class="fixed inset-0 z-40 hidden bg-black/40 backdrop-blur-sm" onclick="closeAIPopup()"></div>
+
+<!-- AI POPUP -->
+<div id="aiPopup" class="fixed inset-0 z-50 flex items-center justify-center hidden p-4">
+    <div class="relative w-full max-w-3xl p-6 overflow-y-auto bg-white shadow-lg rounded-2xl max-h-96">
+        
+        <!-- CLOSE BUTTON -->
+        <div class="flex justify-end mb-4">
+            <button onclick="closeAIPopup()" 
+                    class="flex items-center justify-center w-8 h-8 text-2xl font-bold text-gray-600 rounded-full cursor-pointer hover:text-gray-900 hover:bg-gray-200">
+                ✕
+            </button>
+        </div>
+
+        <h2 class="mb-2 text-xl font-bold text-black">✨ AI Summary</h2>
+        <div id="aiLoading" class="hidden mb-4 spinner-center">
+          <div class="spinner" aria-hidden="true"></div>
+          <div class="text-sm text-black">Loading summary...</div>
+        </div>
+        <p id="aiSummary" class="mb-6 text-black"></p>
+
+        <h2 class="mb-2 text-xl font-bold text-black">📌 Detailed Insight</h2>
+        <div id="aiLoadingInsight" class="hidden mb-2 spinner-center">
+          <div class="spinner" aria-hidden="true"></div>
+          <div class="text-sm text-black">Loading insight...</div>
+        </div>
+        <p id="aiInsight" class="text-black"></p>
+
+    </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div id="aiBackdrop" class="fixed inset-0 hidden bg-black/40"></div>
+
+<!-- AI Modal for task list -->
+<div id="aiTaskModal" class="fixed inset-0 flex items-center justify-center hidden bg-black bg-opacity-40">
+
+    <div class="bg-white rounded-xl p-6 w-[80%] max-w-4xl shadow-lg">
+
+        <h2 class="mb-4 text-xl font-bold">✨ Generate Tasks with AI</h2>
+
+        <!-- USER WRITES PROJECT DETAILS HERE -->
+        <textarea id="aiTaskInput"
+                  class="w-full h-40 p-3 border rounded-lg"
+                  placeholder="Describe the project details..."></textarea>
+
+        <div class="flex justify-end gap-4 mt-4" th:if="${project != null}">
+            <button onclick="closeAiTaskModal()" class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
+
+            <button onclick="generateAiTasks()"
+                    class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                Generate
+            </button>
+        </div>
+
+        <p id="aiLoader" class="hidden mt-3 font-medium text-center text-indigo-600">
+            Generating tasks... please wait...
+        </p>
+
+    </div>
+</div>
+
+
+
+
+<!-- Modal Backdrop -->
+<div id="taskBackdrop" class="fixed inset-0 hidden bg-black/40"></div>
+
+<!-- Add Task Popup -->
+<div id="taskModal" 
+     class="fixed inset-0 flex items-center justify-center hidden p-4 bg-black/40">
+
+    <div class="w-full max-w-lg p-6 bg-white shadow-xl rounded-xl">
+
+        <h2 class="mb-4 text-xl font-bold text-slate-800">Add New Task</h2>
+
+        <input type="text" id="taskTitle" placeholder="Task Title" 
+               class="w-full p-3 mb-3 border rounded-lg">
+
+        <input type="text" id="taskCategory" placeholder="Category (UI/UX, Backend...)" 
+               class="w-full p-3 mb-3 border rounded-lg">
+
+        <textarea id="taskDescription" placeholder="Task Description (optional)" 
+               class="w-full h-24 p-3 mb-3 border rounded-lg resize-none"></textarea>
+
+        <div class="flex justify-end gap-3">
+            <button onclick="closeTaskModal()"
+                class="px-4 py-2 rounded-lg bg-slate-200 text-slate-700">
+                Cancel
+            </button>
+
+            <button type="button" onclick="submitTask()"
+                class="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+                Add Task
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"></script>
+
+<script>
+function openTaskModal() {
+    document.getElementById("taskModal").classList.remove("hidden");
+}
+
+function closeTaskModal() {
+    document.getElementById("taskModal").classList.add("hidden");
+    // Clear form inputs
+    document.getElementById("taskTitle").value = "";
+    document.getElementById("taskCategory").value = "";
+    document.getElementById("taskDescription").value = "";
+}
+
+function submitTask() {
+    const title = document.getElementById("taskTitle").value.trim();
+    const category = document.getElementById("taskCategory").value.trim();
+    const description = document.getElementById("taskDescription").value.trim();
+
+    if (!title || !category) {
+        alert("Please fill in title and category");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("category", category);
+    formData.append("description", description);
+
+    fetch("/api/task/create", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Failed to create task");
+        return response.json();
+    })
+    .then(data => {
+        console.log("✅ Task created:", data);
+        alert("Task added successfully!");
+        closeTaskModal();
+        // Optionally reload the page or refresh task list
+        location.reload();
+    })
+    .catch(error => {
+        console.error("❌ Error creating task:", error);
+        alert("Failed to create task: " + error.message);
+    });
+}
+
+function openAIModal() {
+    document.getElementById("aiModal").classList.remove("hidden");
+    document.getElementById("aiBackdrop").classList.remove("hidden");
+}
+function closeAIModal() {
+    document.getElementById("aiModal").classList.add("hidden");
+    document.getElementById("aiBackdrop").classList.add("hidden");
+}
+</script>
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+<!-- payment dialog javascript -->
+<script>
+  function openPaymentDialog(acceptUrl) {
+    document.getElementById("proceedPaymentBtn").setAttribute("href", acceptUrl);
+    
+    document.getElementById("payment-dialog").classList.remove("hidden");
+    document.getElementById("payment-backdrop").classList.remove("hidden");
+  }
+
+  function closePaymentDialog() {
+    document.getElementById("payment-dialog").classList.add("hidden");
+    document.getElementById("payment-backdrop").classList.add("hidden");
+  }
+</script>
+
+<!-- Payment Dialog JavaScript -->
+<script>
+  let selectedProposalId = null;
+  let selectedAmount = null;
+
+  function openPaymentDialog(proposalId, amount) {
+    selectedProposalId = proposalId;
+    selectedAmount = amount;
+
+    document.getElementById("payment-dialog").classList.remove("hidden");
+    document.getElementById("payment-backdrop").classList.remove("hidden");
+  }
+
+  function closePaymentDialog() {
+    document.getElementById("payment-dialog").classList.add("hidden");
+    document.getElementById("payment-backdrop").classList.add("hidden");
+  }
+
+  function startPayment() {
+
+    closePaymentDialog(); // Close modal before payment popup
+
+    // Razorpay Checkout Options
+    var options = {
+      "key": "rzp_test_RTq0pZ3gH0hMCJ", 
+      "amount": selectedAmount * 100,  
+      "currency": "INR",
+      "name": "GigLance",
+      "description": "Payment for Proposal " + selectedProposalId,
+
+      // When payment succeeds
+      "handler": function (response) {
+        window.location.href =
+          "/escrow/payment/success?proposalId=" + selectedProposalId +
+          "&paymentId=" + response.razorpay_payment_id;
+      }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+  }
+</script>
+
+<!-- AI Script -->
+<script>
+function openAISummaryModal(projectId) {
+    document.getElementById("aiPopup").classList.remove("hidden");
+    document.getElementById("aiModalBackdrop").classList.remove("hidden");
+
+    // show loading indicators
+    const aiLoading = document.getElementById("aiLoading");
+    const aiLoadingInsight = document.getElementById("aiLoadingInsight");
+    const aiSummaryEl = document.getElementById("aiSummary");
+    const aiInsightEl = document.getElementById("aiInsight");
+    if (aiLoading) aiLoading.classList.remove('hidden');
+    if (aiLoadingInsight) aiLoadingInsight.classList.remove('hidden');
+    if (aiSummaryEl) aiSummaryEl.innerText = '';
+    if (aiInsightEl) aiInsightEl.innerText = '';
+
+    fetch(`/api/ai-summary/${projectId}`, { method: "POST" })
+      .then(res => {
+        if (!res.ok) throw new Error('AI service returned ' + res.status);
+        return res.json();
+      })
+      .then(data => {
+        if (aiSummaryEl) aiSummaryEl.innerText = data.summary || "No summary available";
+        // ProductAIController returns `description` (not `insight`)
+        if (aiInsightEl) aiInsightEl.innerText = data.description || "No insight available";
+        // remove loading indicators from DOM now that we have content
+        try { if (aiLoading) aiLoading.remove(); } catch(e) {}
+        try { if (aiLoadingInsight) aiLoadingInsight.remove(); } catch(e) {}
+      })
+      .catch(err => {
+        console.error(err);
+        if (aiSummaryEl) aiSummaryEl.innerText = "Error fetching summary.";
+        if (aiInsightEl) aiInsightEl.innerText = "Error fetching insight.";
+        try { if (aiLoading) aiLoading.remove(); } catch(e) {}
+        try { if (aiLoadingInsight) aiLoadingInsight.remove(); } catch(e) {}
+      });
+}
+
+function closeAIPopup() {
+  document.getElementById("aiPopup").classList.add("hidden");
+  document.getElementById("aiModalBackdrop").classList.add("hidden");
+  // also clear and hide any loading indicators
+  const aiLoading = document.getElementById("aiLoading");
+  const aiLoadingInsight = document.getElementById("aiLoadingInsight");
+  const aiSummaryEl = document.getElementById("aiSummary");
+  const aiInsightEl = document.getElementById("aiInsight");
+  if (aiLoading) aiLoading.classList.add('hidden');
+  if (aiLoadingInsight) aiLoadingInsight.classList.add('hidden');
+  if (aiSummaryEl) aiSummaryEl.innerText = '';
+  if (aiInsightEl) aiInsightEl.innerText = '';
+}
+
+
+</script>
+
+<!-- sign script -->
+
+
+
+
+<!-- tasklist script AI -->
+<th:block layout:fragment="script"></th:block>
+<th:block layout:fragment="filterscript"></th:block>
+<th:block layout:fragment="proposalfilterscript"></th:block>
+<th:block layout:fragment="viewprojectsfilterscript"></th:block>
+<th:block layout:fragment="contractsfilterscript"></th:block>
+<th:block layout:fragment="invitationsfilterscript"></th:block>
+<th:block layout:fragment="dashboardscripts"></th:block>
+<th:block layout:fragment="freelancerfilterscript"></th:block>
+<th:block layout:fragment="analyticsscripts"></th:block>
+<th:block layout:fragment="signscripts"></th:block>
+<th:block layout:fragment="livejobsscript"></th:block>
+<th:block layout:fragment="adminpaymentjs"></th:block>
+
+<!-- chart.js script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Contract Details</title>
+    <style>
+        @media print {
+            nav { display: none !important; }
+            .navbar { display: none !important; }
+            [class*="navbar"] { display: none !important; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen p-6 bg-gray-100 text-slate-900">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-2xl"
+     style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div class="flex items-center gap-4">
+            
+            <div>
+                <h1 class="text-2xl font-bold text-white">Contract Details</h1>
+                <p class="text-sm text-white">Full contract information between you and the client</p>
+            </div>
+        </div>
+        <a th:if="${contract != null && contract.freelancer != null}" th:href="@{/freelancer/dashboard/{id}(id=${contract.freelancer.id})}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white text-slate-800 rounded-xl hover:bg-gray-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+        <a th:if="${contract == null}" th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white text-slate-800 rounded-xl hover:bg-gray-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Contract Card -->
+    <section class="overflow-hidden bg-white shadow-lg rounded-2xl" th:if="${contract != null}">
+
+        <!-- Card Header -->
+        <div class="p-6 ">
+            <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                <div>
+                    <h2 class="mb-2 text-xl font-bold text-black" th:text="${contract.project.title}">
+                        Project Title Here
+                    </h2>
+                    <div class="flex flex-wrap gap-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center justify-center w-6 h-6 bg-purple-500 rounded-md">
+                                <img th:src="${contract.client.imageUrl != null ? contract.client.imageUrl : '/images/image.png'}"
+                                     alt="Client Image"
+                                     class="object-cover w-8 h-8 rounded-md" />
+                            </div>
+                            <span class="text-black">Client:</span>
+                            <span class="font-medium text-black" th:text="${contract.client.name}">John Doe</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center justify-center w-6 h-6 bg-blue-500 rounded-md">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                </svg>
+                            </div>
+                            <span class="text-black">Freelancer:</span>
+                            <span class="font-medium text-black" th:text="${contract.freelancer.name}">You</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contract Status -->
+                <div>
+                    <span th:switch="${contract.status.name()}">
+                        <span th:case="'NOT_STARTED'" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-200 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+                            Not Started
+                        </span>
+                        <span th:case="'ACTIVE'" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-emerald-700 bg-emerald-100 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Active
+                        </span>
+                        <span th:case="'COMPLETED'" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-blue-700 bg-blue-100 rounded-full">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                            Completed
+                        </span>
+                        <span th:case="'TERMINATED'" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-red-700 bg-red-100 rounded-full">
+                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                            Cancelled
+                        </span>
+                        <span th:case="*" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-full">
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            Unknown
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-6">
+
+            <!-- Contract Details Grid -->
+            <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3 lg:grid-cols-6">
+                
+                <!-- Amount -->
+                <div class="p-4 border rounded-xl bg-emerald-50">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide uppercase text-emerald-600">Amount</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="'₹' + ${contract.amount}">₹0</p>
+                </div>
+
+                <!-- Start Date -->
+                <div class="p-4 border border-blue-100 rounded-xl bg-blue-50">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-lg">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide text-blue-600 uppercase">Start Date</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="${#temporals.format(contract.startDate, 'dd MMM yyyy')}">NA</p>
+                </div>
+
+                <!-- End Date -->
+                <div class="p-4 border rounded-xl bg-amber-50 border-amber-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide uppercase text-amber-600">End Date</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="${#temporals.format(contract.endDate, 'dd MMM yyyy')}">NA</p>
+                </div>
+
+                <!-- Category -->
+                <div class="p-4 border border-purple-100 rounded-xl bg-purple-50">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 bg-purple-500 rounded-lg">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide text-purple-600 uppercase">Category</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="${contract.project.category}">Web Development</p>
+                </div>
+
+                <!-- Proposal ID -->
+                <div class="p-4 border rounded-xl bg-cyan-50 border-cyan-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide uppercase text-cyan-600">Proposal ID</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="'#' + ${contract.proposal.id}">#123</p>
+                </div>
+
+                <!-- Created At -->
+                <div class="p-4 border rounded-xl bg-rose-50 border-rose-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-rose-500">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-medium tracking-wide uppercase text-rose-600">Created</span>
+                    </div>
+                    <p class="text-lg font-bold text-slate-800" th:text="${#temporals.format(contract.createdAt, 'dd MMM yyyy')}">NA</p>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="p-6 mb-8 border rounded-xl bg-slate-50 border-slate-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-xl">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Project Progress</h3>
+                            <p class="text-sm text-slate-500" th:text="${contract.project.progress + '% Completed'}">0% Completed</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-sm font-bold text-blue-600 bg-blue-100 rounded-full" th:text="${contract.project.progress + '%'}">0%</span>
+                </div>
+
+                <div class="relative w-full h-4 overflow-hidden rounded-full bg-slate-200">
+                    <div class="h-4 transition-all duration-500 bg-blue-500 rounded-full"
+                         th:style="'width:' + (${contract.project.progress != null ? contract.project.progress : 0}) + '%'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <!-- Submit Work - Only for Freelancers -->
+                <!-- <a th:if="${#authorization.expression('hasRole(''ROLE_FREELANCER'')')}"
+                   th:href="@{/freelancer/project/submit-work/{id}(id=${contract.project.id})}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-emerald-500 rounded-xl hover:bg-emerald-600 transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    Submit Work
+                </a> -->
+
+                <a th:href="@{/contracts/receipt/{id}(id=${contract.id})}"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-colors shadow-sm"
+                   style="background-color: #FF6B35; hover: background-color: #ea580c;">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Download Contract PDF
+                </a>
+            </div>
+
+            <!-- Digital Signatures Section -->
+         <!-- Digital Signatures Section -->
+<div class="p-6 mt-8 border rounded-xl bg-slate-50 border-slate-200">
+    
+    <h3 class="mb-6 text-lg font-bold tracking-wide uppercase text-slate-800">Digital Signatures</h3>
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+        <!-- CLIENT SIGNATURE -->
+        <div class="p-4 bg-white border shadow-sm rounded-xl">
+            <h4 class="font-semibold text-slate-800" th:text="${contract.client.name}">Client Name</h4>
+            <p class="mb-3 text-sm text-slate-500">Client Signature</p>
+
+            <div class="flex items-center justify-center h-40 p-3 border-2 border-dashed rounded-lg bg-slate-100">
+
+                <!-- Signature image -->
+                <img th:if="${contract.clientSignature != null}"
+                     th:src="${'data:image/png;base64,' + contract.clientSignature}"
+                     class="object-contain max-h-36"/>
+
+                <!-- Canvas when NOT signed - Only show for client -->
+                <canvas th:if="${contract.clientSignature == null && loggedInUser.id == contract.client.id}"
+                        id="clientSignature"
+                        class="w-full h-full"></canvas>
+
+                <!-- Message for non-client users -->
+                <div th:if="${contract.clientSignature == null && loggedInUser.id != contract.client.id}"
+                     class="text-center text-slate-500">
+                    <p class="text-sm">Awaiting client signature...</p>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-2">
+                <p class="text-xs text-slate-500">
+                    Date: 
+                    <!-- <span th:text="${contract.clientSignedAt != null ? #temporals.format(contract.clientSignedAt, 'dd MMM yyyy HH:mm') : '___________'}"></span> -->
+                </p>
+
+                <div class="flex gap-2">
+                    <!-- Only show buttons for client -->
+                    <button th:if="${loggedInUser.id == contract.client.id}"
+                            onclick="clearSignatureCanvas('client')" 
+                            class="px-3 py-1 text-xs bg-gray-200 rounded">
+                        Clear
+                    </button>
+
+                    <button th:if="${contract.clientSignature == null && loggedInUser.id == contract.client.id}"
+                            th:onclick="'saveSignature(\'client\', ' + ${contract.id} + ')'"
+                            class="px-3 py-1 text-xs text-white bg-blue-600 rounded">
+                        Save
+                    </button>
+
+                    <!-- Signed badge for when client has signed -->
+                    <span th:if="${contract.clientSignature != null}"
+                          class="flex items-center gap-1 px-3 py-1 text-xs text-white rounded bg-emerald-600">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Signed
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FREELANCER SIGNATURE -->
+        <div class="p-4 bg-white border shadow-sm rounded-xl">
+            <h4 class="font-semibold text-slate-800" th:text="${contract.freelancer.name}">Freelancer Name</h4>
+            <p class="mb-3 text-sm text-slate-500">Freelancer Signature</p>
+
+            <div class="flex items-center justify-center h-40 p-3 border-2 border-dashed rounded-lg bg-slate-100">
+
+                <!-- Signature image -->
+                <img th:if="${contract.freelancerSignature != null}"
+                     th:src="${'data:image/png;base64,' + contract.freelancerSignature}"
+                     class="object-contain max-h-36"/>
+
+                <!-- Canvas when NOT signed - Only show for freelancer -->
+                <canvas th:if="${contract.freelancerSignature == null && loggedInUser.id == contract.freelancer.id}"
+                        id="freelancerSignature"
+                        class="w-full h-full"></canvas>
+
+                <!-- Message for non-freelancer users -->
+                <div th:if="${contract.freelancerSignature == null && loggedInUser.id != contract.freelancer.id}"
+                     class="text-center text-slate-500">
+                    <p class="text-sm">Awaiting freelancer signature...</p>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-2">
+                <p class="text-xs text-slate-500">
+                    Date: 
+                    <!-- <span th:text="${contract.freelancerSignedAt != null ? #temporals.format(contract.freelancerSignedAt, 'dd MMM yyyy HH:mm') : '___________'}"></span> -->
+                </p>
+
+                <div class="flex gap-2">
+                    <!-- Only show buttons for freelancer -->
+                    <button th:if="${loggedInUser.id == contract.freelancer.id}"
+                            onclick="clearSignatureCanvas('freelancer')" 
+                            class="px-3 py-1 text-xs bg-gray-200 rounded">
+                        Clear
+                    </button>
+
+                    <button th:if="${contract.freelancerSignature == null && loggedInUser.id == contract.freelancer.id}"
+                            th:onclick="'saveSignature(\'freelancer\', ' + ${contract.id} + ')'"
+                            class="px-3 py-1 text-xs text-white bg-blue-600 rounded">
+                        Save
+                    </button>
+
+                    <!-- Signed badge for when freelancer has signed -->
+                    <span th:if="${contract.freelancerSignature != null}"
+                          class="flex items-center gap-1 px-3 py-1 text-xs text-white rounded bg-emerald-600">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Signed
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+        </div>
+    </section>
+
+    <!-- Empty State: No Contract -->
+    <section class="overflow-hidden bg-white shadow-lg rounded-2xl" th:if="${contract == null}">
+        <div class="p-12 text-center">
+            <div class="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100">
+                <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <h3 class="mb-2 text-xl font-bold text-slate-800">No Contract Available</h3>
+            <p class="max-w-md mx-auto mb-2 font-medium text-slate-600">
+                No freelancer assigned or proposal for this project as of now
+            </p>
+            <p class="max-w-md mx-auto mb-8 text-sm text-slate-500">
+                Once you accept a proposal or hire a freelancer, the contract details will appear here.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a th:href="@{/client/dashboard}"
+                   class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<th:block layout:fragment="signscripts">
+
+<script>
+// =============== GLOBAL VARIABLES ===============
+let canvasClient = null;
+let ctxClient = null;
+let canvasFreelancer = null;
+let ctxFreelancer = null;
+
+// =============== INIT CANVAS FUNCTION ===============
+function initSignatureCanvas(id, role) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+
+    console.log("Canvas found for:", role);
+
+    // Set canvas size dynamically
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+
+    // Assign to correct global variable
+    if (role === "client") {
+        canvasClient = canvas;
+        ctxClient = ctx;
+    } else {
+        canvasFreelancer = canvas;
+        ctxFreelancer = ctx;
+    }
+
+    let drawing = false;
+
+    // MOUSE EVENTS
+    canvas.addEventListener("mousedown", (e) => {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+        if (!drawing) return;
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    });
+
+    canvas.addEventListener("mouseup", () => drawing = false);
+    canvas.addEventListener("mouseleave", () => drawing = false);
+
+    // TOUCH EVENTS
+    canvas.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(
+            e.touches[0].clientX - rect.left,
+            e.touches[0].clientY - rect.top
+        );
+    });
+
+    canvas.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(
+            e.touches[0].clientX - rect.left,
+            e.touches[0].clientY - rect.top
+        );
+        ctx.stroke();
+    });
+
+    canvas.addEventListener("touchend", () => drawing = false);
+}
+
+// =============== SAVE SIGNATURE ===============
+function saveSignature(role, contractId) {
+    console.log("Saving for:", role);
+    console.log("Contract ID:", contractId);
+
+    const canvas = role === "client" ? canvasClient : canvasFreelancer;
+    console.log("Canvas object:", canvas);
+
+    if (!canvas) {
+        alert("Signature pad not loaded. Refresh the page.");
+        console.error("Canvas not found for role:", role);
+        return;
+    }
+
+    // Check if canvas is blank (empty signature)
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    let isBlank = true;
+    for (let i = 0; i < data.length; i += 4) {
+        // Check if any pixel has non-transparent alpha (has content)
+        if (data[i + 3] !== 0) {
+            isBlank = false;
+            break;
+        }
+    }
+    
+    if (isBlank) {
+        alert("Please draw your signature before saving.");
+        return;
+    }
+
+    const image = canvas.toDataURL("image/png");
+    console.log("Image data length:", image.length);
+
+    fetch(`/contracts/saveSignature/${contractId}?role=${role}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image })
+    })
+        .then(res => {
+            console.log("Response status:", res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log("Response data:", data);
+            if (data.success) {
+                alert("Signature saved!");
+                location.reload();
+            } else {
+                alert(data.error || "Failed to save signature.");
+            }
+        })
+        .catch(err => {
+            console.error("Error saving signature:", err);
+            alert("Error: " + err.message);
+        });
+}
+
+// =============== CLEAR SIGNATURE ===============
+function clearSignatureCanvas(role) {
+    if (role === "client" && ctxClient) {
+        ctxClient.clearRect(0, 0, canvasClient.width, canvasClient.height);
+    }
+    if (role === "freelancer" && ctxFreelancer) {
+        ctxFreelancer.clearRect(0, 0, canvasFreelancer.width, canvasFreelancer.height);
+    }
+}
+
+// =============== LOAD CANVAS AFTER PAGE RENDER ===============
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("clientSignature")) {
+        initSignatureCanvas("clientSignature", "client");
+    }
+    if (document.getElementById("freelancerSignature")) {
+        initSignatureCanvas("freelancerSignature", "freelancer");
+    }
+});
+</script>
+
+
+
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Payment Receipt</title>
+  <!-- Include styles directly so we don't render the site navbar/footer -->
+  <link rel="stylesheet" th:href="@{/css/output.css}">
+  <style>
+    /* Hide interactive controls when printing / saving as PDF */
+    @media print {
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen px-6 py-12 bg-ai-soft">
+    <div class="max-w-3xl p-8 mx-auto bg-white shadow-lg rounded-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-ai">Payment Receipt</h1>
+          <p class="text-sm text-ai/80" th:text="${#temporals.format(escrow.createdAt, 'dd MMM yyyy')}"></p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-ai/70">Receipt ID</p>
+          <p class="font-semibold text-ai/90" th:text="${escrow.paymentInfo.receiptId}"></p>
+        </div>
+      </div>
+
+      <div class="pt-6 mt-6 border-t">
+        <div class="grid gap-4 text-sm md:grid-cols-2 text-ai/90">
+          <div>
+            <p class="font-medium">Payer</p>
+            <p th:text="${escrow.client != null ? escrow.client.name : ''}"></p>
+            <p th:text="${escrow.client != null ? escrow.client.email : ''}"></p>
+          </div>
+
+          <div>
+            <p class="font-medium">Payee</p>
+            <p th:text="${escrow.freelancer != null ? escrow.freelancer.name : ''}"></p>
+            <p th:text="${escrow.freelancer != null ? escrow.freelancer.email : ''}"></p>
+          </div>
+        </div>
+
+        <div class="p-4 mt-6 border border-blue-100 rounded-lg bg-blue-50">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-ai/80">Project</p>
+              <p class="font-semibold text-ai/90" th:text="${escrow.project != null ? escrow.project.title : ''}"></p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-ai/80">Amount</p>
+              <p class="text-xl font-bold text-ai/90">₹<span th:text="${escrow.amount}"></span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 text-sm text-ai/80">
+          <p><strong>Payment Method:</strong> <span th:text="${escrow.paymentInfo != null ? escrow.paymentInfo.paymentMethod : 'N/A'}"></span></p>
+          <p><strong>Transaction ID:</strong> <span th:text="${escrow.paymentInfo != null ? escrow.paymentInfo.transactionId : 'N/A'}"></span></p>
+          <p><strong>Order ID:</strong> <span th:text="${escrow.paymentInfo != null ? escrow.paymentInfo.orderId : 'N/A'}"></span></p>
+        </div>
+
+        <div class="flex items-center justify-between mt-8">
+          <a th:href="@{/client/payment/{id}(id=${escrow.client.id})}" class="px-4 py-2 bg-gray-100 rounded-lg no-print">Back</a>
+          <button class="px-4 py-2 text-white rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 no-print" onclick="window.print()">Print / Save as PDF</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

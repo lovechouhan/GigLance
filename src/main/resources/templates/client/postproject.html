@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Post Project</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen p-8 bg-gray-100">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-xl"
+     style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Post a New Project</h1>
+            <p class="mt-1 text-sm text-white">Create a project and find the best freelancers.</p>
+        </div>
+        <a th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition bg-white rounded-lg shadow-md text-slate-800 hover:bg-gray-100 hover:shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Main Form -->
+    <main class="max-w-2xl mx-auto overflow-hidden bg-white shadow-lg rounded-xl">
+        <!-- Form Header -->
+        <div class="p-5 ">
+            <h2 class="flex items-center gap-2 text-xl font-bold text-black">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Project Information
+            </h2>
+        </div>
+
+        <form th:action="@{/client/postproject}" th:Object="${projectDto}" method="post" class="p-8 space-y-6" id="postProjectForm">
+            <!-- Project Title -->
+            <div>
+                <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                    <div class="flex items-center justify-center w-6 h-6 bg-blue-100 rounded">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    Project Title
+                    <span class="text-red-500">*</span>
+                </label>
+                <input name="title" type="text" placeholder="e.g. Build an E-commerce Website"
+                       required
+                       minlength="5"
+                       class="w-full p-3 transition border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <p class="mt-1 text-xs text-slate-500">Title is required and must be at least 5 characters</p>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                    <div class="flex items-center justify-center w-6 h-6 bg-purple-100 rounded">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                        </svg>
+                    </div>
+                    Project Description
+                </label>
+                <textarea name="description" rows="4" placeholder="Describe your project requirements..."
+                          class="w-full p-3 transition border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+
+            <!-- Budget + Deadline -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                        <div class="flex items-center justify-center w-6 h-6 rounded bg-emerald-100">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        Budget (₹)
+                    </label>
+                    <input name="budget" type="number" placeholder="Enter budget"
+                           class="w-full p-3 transition border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                        <div class="flex items-center justify-center w-6 h-6 rounded bg-amber-100">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        Deadline
+                    </label>
+                    <input name="deadline" type="date"
+                           class="w-full p-3 transition border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                    <div class="flex items-center justify-center w-6 h-6 rounded bg-cyan-100">
+                        <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                    </div>
+                    Category
+                </label>
+                <select name="category"
+                        class="w-full p-3 transition bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option>Web Development</option>
+                    <option>Mobile Apps</option>
+                    <option>UI/UX Design</option>
+                    <option>Content Writing</option>
+                    <option>App Development</option>
+                    <option>AIML</option>
+                    <option>Software Development</option>
+                    <option>Graphic Design</option>
+                    <option>Digital Marketing</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit"
+                        class="flex items-center justify-center w-full gap-2 px-6 py-4 font-semibold text-white transition bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:shadow-blue-500/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Post Project
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Validation Script -->
+    <script>
+        const form = document.getElementById('postProjectForm');
+        const titleInput = form.querySelector('input[name="title"]');
+        
+        form.addEventListener('submit', function(e) {
+            const title = titleInput.value.trim();
+            
+            // Check if title is empty
+            if (!title) {
+                e.preventDefault();
+                titleInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:ring-2');
+                alert('⚠️ Project Title is Required!\n\nPlease enter a project title before posting.');
+                titleInput.focus();
+                return false;
+            }
+            
+            // Check if title is at least 5 characters
+            if (title.length < 5) {
+                e.preventDefault();
+                titleInput.classList.add('border-red-500', 'focus:ring-red-500', 'focus:ring-2');
+                alert('⚠️ Project Title Too Short!\n\nTitle must be at least 5 characters long.');
+                titleInput.focus();
+                return false;
+            }
+            
+            // Remove error styling if validation passes
+            titleInput.classList.remove('border-red-500', 'focus:ring-red-500');
+            return true;
+        });
+        
+        // Remove error styling when user starts typing
+        titleInput.addEventListener('input', function() {
+            this.classList.remove('border-red-500', 'focus:ring-red-500');
+        });
+    </script>

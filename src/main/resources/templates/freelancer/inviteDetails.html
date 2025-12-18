@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Invitation Details</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="min-h-screen p-6 bg-gray-100 text-slate-900">
+
+        <!-- Header -->
+        <header class="flex items-center justify-between p-6 mb-8 rounded-2xl"
+         style="background:  #4c6ae2">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+            <div>
+                <h1 class="text-2xl font-bold text-white">Invitation Details</h1>
+                <p class="text-white">View the details of your invitation here.</p>
+            </div>
+            <a href="javascript:history.back()"
+               class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white rounded-lg text-slate-800 hover:bg-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+        <!-- Main Card -->
+        <div class="max-w-4xl mx-auto overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+
+            <!-- Client Info Header -->
+            <div class="p-6 ">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center">
+                    <div class="flex items-center justify-center w-16 h-16 text-2xl font-bold text-white bg-blue-600 shadow-lg rounded-xl">
+                        <span th:text="${invitation.client != null ? invitation.client.name.substring(0,1) : 'U'}">U</span>
+                    </div>
+                    <div class="flex-1">
+                       <p class="text-black">Client</p>
+                        <h2 class="text-xl font-semibold text-black" th:text="${invitation.client.name}">Client Name</h2>
+                       
+                        <p class="mt-1 text-sm text-black">
+                            Invited on 
+                            <span th:text="${invitation.createdAt != null ? #temporals.format(invitation.createdAt, 'dd MMM yyyy') : ''}">
+                                12 Nov 2025
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <span th:text="${invitation.status}"
+                              th:classappend="${invitation.status == 'ACCEPTED' ? ' bg-emerald-100 text-emerald-700' : (invitation.status == 'DECLINED' ? ' bg-red-100 text-red-700' : ' bg-amber-100 text-amber-700')}"
+                              class="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold rounded-full">
+                            <span class="w-2 h-2 rounded-full animate-pulse"
+                                  th:classappend="${invitation.status == 'ACCEPTED' ? ' bg-emerald-500' : (invitation.status == 'DECLINED' ? ' bg-red-500' : ' bg-amber-500')}"></span>
+                            PENDING
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invitation Message -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Invitation Message</h3>
+                </div>
+                <p class="leading-relaxed text-slate-600 pl-13"
+                   th:text="${invitation.message != null ? invitation.message : 'No message provided.'}">
+                   We're impressed with your profile and would like you to collaborate on this project.
+                </p>
+            </div>
+
+            <!-- Project Details -->
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-800">Project Details</h3>
+                </div>
+
+                <!-- Project Info Grid -->
+                <div class="grid grid-cols-2 gap-4 mb-6 md:grid-cols-4">
+                    <div class="p-4 border border-blue-100 rounded-xl bg-blue-50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            <p class="text-xs font-medium text-blue-600">Project Title</p>
+                        </div>
+                        <p class="font-semibold text-slate-800"
+                           th:text="${invitation.projectTitle != null ? invitation.projectTitle.title : 'Untitled'}">E-Commerce Platform</p>
+                    </div>
+                    <div class="p-4 border rounded-xl bg-emerald-50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p class="text-xs font-medium text-emerald-600">Budget</p>
+                        </div>
+                        <p class="font-semibold text-slate-800"
+                           th:text="${invitation.projectTitle != null ? '₹' + invitation.projectTitle.budget : 'N/A'}">₹50,000</p>
+                    </div>
+                    <div class="p-4 border rounded-xl bg-amber-50 border-amber-100">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-xs font-medium text-amber-600">Deadline</p>
+                        </div>
+                        <p class="font-semibold text-slate-800"
+                           th:text="${invitation.projectTitle != null && invitation.projectTitle.deadline != null ? #temporals.format(invitation.projectTitle.deadline,'dd MMM yyyy') : 'Not set'}">25 Nov 2025</p>
+                    </div>
+                    <div class="p-4 border border-purple-100 rounded-xl bg-purple-50">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <p class="text-xs font-medium text-purple-600">Category</p>
+                        </div>
+                        <p class="font-semibold text-slate-800"
+                           th:text="${invitation.projectTitle != null ? invitation.projectTitle.category : 'General'}">Web Development</p>
+                    </div>
+                </div>
+
+                <!-- Project Description -->
+                <div class="p-4 border border-gray-200 rounded-xl bg-gray-50">
+                    <p class="mb-2 text-sm font-medium text-slate-500">Project Description</p>
+                    <p class="leading-relaxed text-slate-700"
+                       th:text="${invitation.projectTitle != null ? invitation.projectTitle.description : 'No description provided.'}">
+                       A full-featured e-commerce solution enabling users to browse and purchase items with real-time inventory and payment integration.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-end gap-3 p-6 border-t border-gray-200 bg-slate-50">
+                <a th:href="@{/freelancer/projects/viewdetails/{id}(id=${invitation.projectTitle != null ? invitation.projectTitle.id : 0})}"
+                   class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors rounded-lg bg-slate-800 hover:bg-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    View Project
+                </a>
+
+                <div th:if="${invitation.status == 'PENDING' and invitation.projectTitle != null and invitation.projectTitle.status == 'OPEN'}" class="flex gap-3">
+                    <a th:href="@{/freelancer/sendProposals/{id}/{invitationId}(id=${invitation.projectTitle != null ? invitation.projectTitle.id : 0}, invitationId=${invitation.id})}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Place Bid
+                    </a>
+                    <a th:href="@{/invite/client/{id}/accept(id=${invitation.id})}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-colors rounded-lg bg-emerald-600 hover:bg-emerald-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Accept
+                    </a>
+                    <a th:href="@{/invite/client/{id}/decline(id=${invitation.id})}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 transition-colors border border-red-200 rounded-lg bg-red-50 hover:bg-red-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Decline
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

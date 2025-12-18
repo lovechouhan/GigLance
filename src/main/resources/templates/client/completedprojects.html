@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Home Page</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+    <!-- Navbar -->
+  <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-emerald-700">Completed Projects</h1>
+    <a href="dashboard.html" class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition">Back to Dashboard</a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto mt-10 px-4">
+
+    <!-- Completed Project Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 hover:shadow-xl transition">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-lg font-semibold text-emerald-700">Portfolio Website Design</h2>
+          <p class="text-sm text-gray-600 mt-1">A modern personal portfolio built with Tailwind and React</p>
+        </div>
+        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">Completed</span>
+      </div>
+
+      <!-- Freelancer Info -->
+      <div class="flex items-center gap-4 mt-5">
+        <img src="https://randomuser.me/api/portraits/men/23.jpg" class="w-14 h-14 rounded-full border" alt="Freelancer">
+        <div>
+          <h3 class="font-medium text-gray-800 text-lg">Rohit Mehra</h3>
+          <p class="text-sm text-gray-500">Frontend Developer</p>
+          <p class="text-xs text-gray-400">Delivered on: 20 Oct 2025</p>
+        </div>
+      </div>
+
+      <!-- Review -->
+      <div class="mt-6">
+        <p class="text-gray-700 text-sm italic border-l-4 border-emerald-400 pl-3">
+          “Rohit did an amazing job! Smooth communication, pixel-perfect design, and delivered before deadline.”
+        </p>
+        <div class="flex items-center mt-3">
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-sm text-gray-600 ml-2">(5/5)</span>
+        </div>
+      </div>
+
+      <!-- Files & Actions -->
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm transition">
+          View Project Details
+        </button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm transition">
+          Download Files
+        </button>
+      </div>
+    </div>
+
+    <!-- Another Project Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 hover:shadow-xl transition">
+      <div class="flex justify-between items-start">
+        <div>
+          <h2 class="text-lg font-semibold text-emerald-700">App UI Mockup Design</h2>
+          <p class="text-sm text-gray-600 mt-1">Mobile UI for an online booking system</p>
+        </div>
+        <span class="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">Completed</span>
+      </div>
+
+      <div class="flex items-center gap-4 mt-5">
+        <img src="https://randomuser.me/api/portraits/women/56.jpg" class="w-14 h-14 rounded-full border" alt="Freelancer">
+        <div>
+          <h3 class="font-medium text-gray-800 text-lg">Neha Kapoor</h3>
+          <p class="text-sm text-gray-500">UI/UX Designer</p>
+          <p class="text-xs text-gray-400">Delivered on: 10 Oct 2025</p>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <p class="text-gray-700 text-sm italic border-l-4 border-emerald-400 pl-3">
+          “Clean and creative designs. Minor revisions were handled perfectly. Would definitely hire again!”
+        </p>
+        <div class="flex items-center mt-3">
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-yellow-500 text-lg">⭐</span>
+          <span class="text-gray-400 text-lg">⭐</span>
+          <span class="text-sm text-gray-600 ml-2">(4/5)</span>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 text-sm transition">
+          View Project Details
+        </button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm transition">
+          Download Files
+        </button>
+      </div>
+    </div>
+
+  </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>My Projects | GigLance</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <div class="min-h-screen px-8 py-10 bg-gray-100">
+
+        <!-- HEADER -->
+        <header class="flex items-center justify-between p-6 mb-8 shadow-lg bg-slate-800 rounded-2xl"
+         style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #6D28D9));">
+            
+            <style>
+              :root {
+                --header-bg-color: #4c6ae2;
+                --header-bg-color-light: #4c6ae2;
+                --header-text-color: #ffffff;
+                --header-subtext-color: #cbd5e1;
+              }
+              
+              header {
+                background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+              }
+            </style>
+            
+            <div>
+                <h1 class="text-3xl font-bold text-white">My Projects</h1>
+                <p class="mt-1 text-white">View and manage all your projects here</p>
+            </div>
+            <a th:href="@{/freelancer/dashboard/{id}(id=${#authentication.principal.id})}"
+               class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-800 bg-white rounded-lg hover:bg-blue-50 transition duration-200 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </header>
+
+        <!-- FILTERS AND VIEW TOGGLE -->
+        <div class="flex items-center justify-between gap-4 p-4 mb-6 bg-white shadow-sm rounded-xl">
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-slate-600">Filter by:</span>
+                <select id="statusFilter"
+                        class="px-4 py-2.5 text-slate-700 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                    <option value="">All Status</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="OPEN">Open</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+            
+            <!-- VIEW TOGGLE BUTTONS -->
+            <div class="flex gap-2 p-1 bg-gray-100 rounded-lg">
+                <button id="rowViewBtn" 
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition duration-200 bg-transparent rounded-lg text-slate-600 hover:bg-gray-200"
+                        title="Row View">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    Row
+                </button>
+                <button id="colViewBtn" 
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition duration-200 rounded-lg bg-slate-800"
+                        title="Column View">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+                    </svg>
+                    Grid
+                </button>
+            </div>
+        </div>
+
+        <!-- NO PROJECTS -->
+        <div th:if="${projects == null or #lists.isEmpty(projects)}"
+             class="p-12 text-center bg-white border border-gray-200 shadow-sm rounded-2xl">
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full">
+                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <p class="text-lg font-semibold text-slate-800">No projects found</p>
+            <p class="mt-1 text-slate-500">Your projects will appear here once created</p>
+        </div>
+
+        <!-- PROJECT LIST -->
+        <div id="projectsContainer" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+            <!-- CARD -->
+            <div class="flex flex-col justify-between h-full overflow-hidden transition-all duration-300 bg-white border border-gray-200 project-card rounded-2xl hover:shadow-xl hover:-translate-y-1"
+                 th:each="project : ${projects}"
+                 th:attr="data-status=${project.status}">
+
+                <!-- Status-based Header Colors -->
+                <style>
+                  .project-card[data-status="COMPLETED"] .card-header {
+                    background-color: #10b981;
+                  }
+                  .project-card[data-status="IN_PROGRESS"] .card-header {
+                    background-color: #f59e0b;
+                  }
+                  .project-card[data-status="OPEN"] .card-header {
+                    background-color: #3b82f6;
+                  }
+                </style>
+
+                <!-- Card Header -->
+                <div class="p-5 card-header bg-slate-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-3 py-1 text-xl font-semibold text-white rounded-full"
+                              th:classappend="${project.status == 'COMPLETED'} ? 'bg-emerald-600' : (${project.status == 'IN_PROGRESS'} ? 'bg-amber-600' : 'bg-blue-600')"
+                              th:text="${project.status}">
+                            STATUS
+                        </span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white"
+                        th:text="${project.title}">
+                        Project Title
+                    </h2>
+                </div>
+
+                <!-- Card Body -->
+                <div class="flex-1 p-5">
+                    <div class="space-y-4">
+                        <!-- Budget -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-100">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs tracking-wide uppercase text-slate-500">Budget</p>
+                                <p class="font-semibold text-slate-800" th:text="'₹' + ${project.budget}">₹0</p>
+                            </div>
+                        </div>
+
+                        <!-- Client -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs tracking-wide uppercase text-slate-500">Client</p>
+                                <p class="font-semibold text-slate-800" th:text="${project.client.name}">Client Name</p>
+                            </div>
+                        </div>
+
+                        <!-- Deadline -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs tracking-wide uppercase text-slate-500">Deadline</p>
+                                <p class="font-semibold text-slate-800" th:text="${#temporals.format(project.deadline, 'yyyy-MM-dd')}">2024-01-01</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="p-5 border-t border-gray-100 bg-gray-50">
+                    <a th:href="@{/freelancer/projects/viewdetails/{id}(id=${project.id})}"
+                       class="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        View Details
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<th:block layout:fragment="viewprojectsfilterscript">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filter = document.getElementById("statusFilter");
+    const cards = document.querySelectorAll(".project-card");
+    const rowViewBtn = document.getElementById("rowViewBtn");
+    const colViewBtn = document.getElementById("colViewBtn");
+    const projectsContainer = document.getElementById("projectsContainer");
+    
+    let isRowView = false;
+
+    // Status filter functionality
+    filter.addEventListener("change", function () {
+        const selected = this.value.toLowerCase();
+
+        cards.forEach(card => {
+            const cardStatus = (card.dataset.status || "").toLowerCase();
+
+            if (selected === "" || selected === cardStatus) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+
+    // Row View Button
+    rowViewBtn.addEventListener("click", function () {
+        isRowView = true;
+        projectsContainer.className = "space-y-4";
+        rowViewBtn.className = "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg transition duration-200";
+        colViewBtn.className = "flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 bg-transparent rounded-lg hover:bg-gray-200 transition duration-200";
+        
+        cards.forEach(card => {
+            card.style.width = "100%";
+        });
+    });
+
+    // Column View Button
+    colViewBtn.addEventListener("click", function () {
+        isRowView = false;
+        projectsContainer.className = "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3";
+        rowViewBtn.className = "flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 bg-transparent rounded-lg hover:bg-gray-200 transition duration-200";
+        colViewBtn.className = "flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-slate-800 rounded-lg transition duration-200";
+        
+        cards.forEach(card => {
+            card.style.width = "";
+        });
+    });
+
+});
+</script>
+</th:block>
+
+</body>
+</html>

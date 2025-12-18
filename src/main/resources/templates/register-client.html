@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{base}">
+<head>
+    <title>Register as Client</title>
+</head>
+<body>
+    <section layout:fragment="content" class="flex items-center justify-center w-full">
+        <div class="w-full max-w-xl p-8 bg-white rounded-lg shadow-md">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Client Registration</h2>
+                <a th:href="@{/register}" class="text-sm text-indigo-600">Back</a>
+            </div>
+
+            <form th:action="@{/register/client}" th:object="${clientDto}" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-sm">Full name</label>
+                    <input th:field="*{name}" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" required />
+                </div>
+                <div>
+                    <label class="block text-sm">Email</label>
+                    <input th:field="*{email}" type="email" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" required />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm">Password</label>
+                        <input th:field="*{password}" type="password" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm">Phone</label>
+                        <input th:field="*{phone}" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm">Company name</label>
+                    <input th:field="*{companyName}" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" />
+                </div>
+
+                <div>
+                    <label class="block text-sm">Website</label>
+                    <input th:field="*{website}" type="text" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200" />
+                </div>
+
+                <div>
+                    <label class="block text-sm">Address</label>
+                    <textarea th:field="*{address}" class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-indigo-200"></textarea>
+                </div>
+
+                <div class="text-right">
+                        <button type="submit" class="px-5 py-2 font-medium text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            Create Client Account
+                        </button>
+                    </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

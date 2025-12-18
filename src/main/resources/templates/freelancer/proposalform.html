@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+  <title>Submit Proposal</title>
+</head>
+
+<body>
+  <!-- Light gray background instead of gradient -->
+  <section layout:fragment="content" class="min-h-screen p-6 bg-gray-100">
+    <div class="max-w-3xl mx-auto">
+      
+      <!-- Success/Error Messages -->
+      <!-- Solid colors instead of gradients -->
+      <div th:if="${success}" class="flex items-center gap-3 p-4 mb-6 border-l-4 rounded-lg bg-emerald-100 border-emerald-500">
+        <div class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <span class="font-medium text-emerald-800">[[${success}]]</span>
+      </div>
+      
+      <div th:if="${error}" class="flex items-center gap-3 p-4 mb-6 bg-red-100 border-l-4 border-red-500 rounded-lg">
+        <div class="flex items-center justify-center w-8 h-8 bg-red-500 rounded-full">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </div>
+        <span class="font-medium text-red-800">[[${error}]]</span>
+      </div>
+
+      <!-- Main Card -->
+      <div class="overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl">
+        
+        <!-- Dark solid header instead of gradient -->
+        <div class="p-6 text-white bg-blue-500">
+          <h1 class="text-2xl font-bold">Submit Proposal</h1>
+          <p class="mt-1 text-slate-300">Send your best offer for this project</p>
+        </div>
+
+        <!-- Project Info -->
+        <!-- Light background with dark accent -->
+        <div th:if="${project != null}" class="p-6 border-b border-gray-200 bg-slate-50">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 bg-blue-600 rounded-xl">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-xl font-bold text-slate-800" th:text="${project.title}">Project title</h2>
+              <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full" th:text="${project.category}">Project Category</span>
+              <div class="flex items-center gap-2 mt-3">
+                <span class="px-3 py-1 text-sm font-bold rounded-lg text-emerald-700 bg-emerald-100">
+                  Budget: <span th:text="${project.budget}">₹0</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form th:action="@{/proposals/sendProposals/{id}(id=${freelancer != null ? freelancer.id : 0})}" method="post" th:object="${proposaldto}" enctype="multipart/form-data" class="p-6 space-y-6">
+          <input type="hidden" name="project.id" th:value="${project != null ? project.id : ''}" />
+          <input type="hidden" name="status" value="PENDING" />
+
+          <div class="grid gap-6 md:grid-cols-2">
+            <!-- Bid Amount -->
+            <!-- Solid colored icon badges -->
+            <div class="group">
+              <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                <span class="flex items-center justify-center w-6 h-6 text-xs text-white rounded-md bg-emerald-500">₹</span>
+                Your Bid Amount (INR)
+              </label>
+              <input name="bidAmount" type="number" step="0.01" required 
+                class="w-full p-4 transition-all duration-200 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 hover:border-blue-300" 
+                placeholder="Enter your bid amount"/>
+            </div>
+
+            <!-- Timeline -->
+            <div class="group">
+              <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+                <span class="flex items-center justify-center w-6 h-6 text-white rounded-md bg-amber-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </span>
+                Estimated Timeline (days)
+              </label>
+              <input name="timelineDays" type="number" min="1" required 
+                class="w-full p-4 transition-all duration-200 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 hover:border-blue-300" 
+                placeholder="Enter days"/>
+            </div>
+          </div>
+        
+          <!-- File Upload -->
+          <div>
+            <label class="flex items-center gap-2 mb-2 text-sm font-semibold text-slate-700">
+              <span class="flex items-center justify-center w-6 h-6 text-white bg-blue-600 rounded-md">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </span>
+              Cover Letter / Proposal Document
+            </label>
+            <!-- Dark upload area with light border -->
+            <div class="flex items-center justify-center w-full">
+              <label for="dropzone-file"
+                  id="dropzone-label"
+                  class="flex flex-col items-center justify-center w-full h-48 transition-all duration-300 border-2 border-gray-300 border-dashed cursor-pointer rounded-2xl group">
+                  
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-placeholder">
+                      <div class="flex items-center justify-center w-16 h-16 mb-4 transition-transform duration-300 bg-blue-600 rounded-full group-hover:scale-110">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                      </div>
+                      <p class="mb-2 text-sm text-slate-300"><span class="font-bold text-blue-400">Click to upload</span> or drag and drop</p>
+                      <p class="text-xs text-slate-400">PDF, DOCX, DOC (Max 10MB)</p>
+                  </div>
+
+                  <input id="dropzone-file" name="coverLetter" type="file" accept=".pdf,.doc,.docx"  required />
+              </label>
+            </div>
+            <!-- File selected feedback -->
+            <!-- Uploaded file preview (Fiverr-style) -->
+            <div id="file-feedback" class="hidden p-4 mt-4 border border-blue-200 rounded-xl bg-blue-50">
+              <div class="flex items-center gap-4">
+                <!-- File Icon -->
+                <div id="file-icon"
+                     class="flex items-center justify-center w-12 h-12 text-2xl rounded-xl">
+                  📄
+                </div>
+
+                <!-- File Info -->
+                <div class="flex-1">
+                  <p id="file-name" class="text-sm font-semibold text-slate-800"></p>
+                  <p id="file-size" class="text-xs text-slate-500"></p>
+                </div>
+
+                <!-- Remove Button -->
+                <button type="button"
+                        id="remove-file"
+                        class="text-sm font-semibold text-red-500 hover:text-red-700">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Actions -->
+          <!-- Dark solid buttons -->
+          <div class="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
+            <button type="submit" 
+              class="flex items-center justify-center w-full gap-2 px-8 py-4 text-lg font-bold text-white transition-all duration-300 bg-blue-600 shadow-lg sm:w-auto rounded-xl hover:shadow-xl hover:scale-105 hover:bg-blue-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              </svg>
+              Send Proposal
+            </button>
+            <a th:href="@{/freelancer/findProjects}" 
+              class="flex items-center gap-2 px-6 py-3 font-semibold text-white transition-all duration-200 bg-slate-700 rounded-xl hover:bg-slate-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+              </svg>
+              Back to projects
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Elements
+  const dropzoneFile = document.getElementById('dropzone-file');
+  const dropzoneLabel = document.getElementById('dropzone-label');
+  const fileFeedback = document.getElementById('file-feedback');
+  const fileNameEl = document.getElementById('file-name');
+  const fileSizeEl = document.getElementById('file-size');
+  const fileIcon = document.getElementById('file-icon');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+  const removeBtn = document.getElementById('remove-file');
+
+  // SAFETY CHECK
+  if (!dropzoneFile) {
+    console.error('dropzoneFile not found');
+    return;
+  }
+  if (!fileFeedback) {
+    console.error('fileFeedback not found');
+    return;
+  }
+
+  // FILE SELECT EVENT
+  dropzoneFile.addEventListener('change', function () {
+    if (!this.files || this.files.length === 0) {
+      console.log('No files selected');
+      return;
+    }
+
+    const file = this.files[0];
+    console.log('File selected:', file.name);
+
+    const ext = file.name.split('.').pop().toLowerCase();
+
+    // EXTENSION CHECK
+    if (!['pdf', 'doc', 'docx'].includes(ext)) {
+      alert('Only PDF or DOC/DOCX files allowed');
+      resetFileUI();
+      return;
+    }
+
+    // SIZE CHECK
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      resetFileUI();
+      return;
+    }
+
+    // UPDATE UI
+    console.log('Updating preview for:', file.name);
+    fileNameEl.textContent = file.name;
+    fileSizeEl.textContent = (file.size / 1024).toFixed(1) + ' KB';
+
+    // SET ICON AND COLOR
+    if (ext === 'pdf') {
+      fileIcon.textContent = '📕';
+      fileIcon.style.backgroundColor = '#dc2626';
+    } else {
+      fileIcon.textContent = '📘';
+      fileIcon.style.backgroundColor = '#2563eb';
+    }
+
+    // SHOW PREVIEW, HIDE PLACEHOLDER
+    fileFeedback.style.display = 'block';
+    fileFeedback.classList.remove('hidden');
+    uploadPlaceholder.style.display = 'none';
+    uploadPlaceholder.classList.add('hidden');
+    console.log('Preview shown');
+  });
+
+  // REMOVE FILE BUTTON
+  if (removeBtn) {
+    removeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      resetFileUI();
+    });
+  }
+
+  // DRAG & DROP
+  if (dropzoneLabel) {
+    dropzoneLabel.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.classList.add('border-blue-500', 'bg-blue-50');
+    });
+
+    dropzoneLabel.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+
+    dropzoneLabel.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.classList.remove('border-blue-500', 'bg-blue-50');
+
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        dropzoneFile.files = files;
+        dropzoneFile.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+  }
+
+  // RESET FUNCTION
+  function resetFileUI() {
+    dropzoneFile.value = '';
+    fileFeedback.style.display = 'none';
+    fileFeedback.classList.add('hidden');
+    uploadPlaceholder.style.display = 'flex';
+    uploadPlaceholder.classList.remove('hidden');
+    console.log('File UI reset');
+  }
+
+});
+</script>
+
+
+</body>
+</html>

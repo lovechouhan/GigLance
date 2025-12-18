@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Register as Freelancer</title>
+</head>
+<body>
+    <!-- Content Fragment -->
+    <section layout:fragment="content">
+        <!-- Full-screen flexbox container -->
+        <div class="flex items-center justify-center min-h-screen px-4 py-12 bg-gray-100">
+            <!-- Card -->
+            <div class="w-full max-w-xl p-8 bg-white rounded-lg shadow-md">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Freelancer Registration</h2>
+                    <a th:href="@{/register}" class="text-sm text-indigo-600 hover:underline">Back</a>
+                </div>
+
+                <!-- Form -->
+                <form th:action="@{/register/freelancer}" th:object="${freelancerDto}" method="post" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input th:field="*{name}" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" required />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input th:field="*{email}" type="email" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" required />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                            <input th:field="*{password}" type="password" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" required />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Phone</label>
+                            <input th:field="*{phone}" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Designation</label>
+                        <input th:field="*{designation}" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" placeholder="e.g., Full Stack Developer" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Skills (comma-separated)</label>
+                        <input th:field="*{skills}" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Short Bio</label>
+                        <textarea th:field="*{bio}" class="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none" rows="3"></textarea>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="px-5 py-2 font-medium text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                            Create Freelancer Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

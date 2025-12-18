@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Release Payments | Admin</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="min-h-screen p-8 bg-gray-50 md:ml-64">
+
+    <!-- PAGE HEADER -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+                Release Escrow Payments
+            </h1>
+            <p class="mt-1 text-sm text-gray-500">
+                Approve and release held freelancer payments
+            </p>
+        </div>
+
+        <a th:href="@{/admin/dashboard}"
+           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-100">
+            ← Dashboard
+        </a>
+    </div>
+
+    <!-- ACTION SUMMARY -->
+    <div class="grid grid-cols-1 gap-6 mb-10 md:grid-cols-3">
+
+        <div class="p-6 bg-white shadow-sm rounded-xl">
+            <p class="text-sm text-gray-500">Payments on Hold</p>
+            <p class="mt-2 text-3xl font-bold text-amber-600">
+                <span th:text="${holdCount}">0</span>
+            </p>
+        </div>
+
+        <div class="p-6 bg-white shadow-sm rounded-xl">
+            <p class="text-sm text-gray-500">Amount on Hold</p>
+            <p class="mt-2 text-3xl font-bold text-amber-600">
+                ₹<span th:text="${holdAmount}">0</span>
+            </p>
+        </div>
+
+        <div class="p-6 bg-white shadow-sm rounded-xl">
+            <p class="text-sm text-gray-500">Released Today</p>
+            <p class="mt-2 text-3xl font-bold text-green-600">
+                ₹<span th:text="${releasedToday}">0</span>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- HOLD PAYMENTS TABLE -->
+    <div class="bg-white shadow-sm rounded-2xl">
+
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold text-gray-900">
+                Payments Awaiting Release
+            </h2>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm table-fixed">
+
+                <thead class="text-gray-600 bg-gray-50">
+                <tr>
+                    <th class="w-[70px] px-4 py-3 text-left">ID</th>
+                    <th class="w-[220px] px-4 py-3 text-left">Freelancer</th>
+                    <th class="w-[260px] px-4 py-3 text-left">Project</th>
+                    <th class="w-[140px] px-4 py-3 text-right">Amount</th>
+                    <th class="w-[140px] px-4 py-3 text-center">Status</th>
+                    <th class="w-[180px] px-4 py-3 text-left">Hold Since</th>
+                    <th class="w-[180px] px-4 py-3 text-center">Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="payment : ${holdPayments}"
+                    class="border-b last:border-0 hover:bg-amber-50">
+
+                    <td class="px-4 py-3 font-semibold"
+                        th:text="${payment.id}">1</td>
+
+                    <td class="px-4 py-3">
+                        <p class="font-medium text-gray-900"
+                           th:text="${payment.freelancer.name}">
+                            Freelancer Name
+                        </p>
+                        <p class="text-xs text-gray-500"
+                           th:text="${payment.freelancer.email}">
+                            email
+                        </p>
+                    </td>
+
+                    <td class="px-4 py-3 truncate"
+                        th:text="${payment.project.title}">
+                        Project Title
+                    </td>
+
+                    <td class="px-4 py-3 font-bold text-right">
+                        ₹<span th:text="${payment.amount}">0</span>
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">
+                            HOLD
+                        </span>
+                    </td>
+
+                    <td class="px-4 py-3 text-gray-500"
+                        th:text="${#temporals.format(payment.createdAt, 'dd MMM yyyy')}">
+                        Date
+                    </td>
+
+                    <td class="px-4 py-3 text-center">
+                        <button
+                            onclick="openReleaseModal([[${payment.id}]], '[[${payment.freelancer.name}]]', [[${payment.amount}]])"
+                            class="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700">
+                            Release Payment
+                        </button>
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+
+            <div th:if="${#lists.isEmpty(holdPayments)}"
+                 class="p-10 text-center text-gray-500">
+                🎉 No payments are pending release.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RELEASE CONFIRMATION MODAL -->
+<div id="releaseModal"
+     class="fixed inset-0 z-50 items-center justify-center hidden bg-black/40">
+
+    <div class="w-full max-w-md p-6 bg-white shadow-xl rounded-2xl">
+
+        <h3 class="mb-4 text-xl font-bold text-gray-900">
+            Confirm Payment Release
+        </h3>
+
+        <div class="p-4 mb-6 rounded-lg bg-gray-50">
+            <p class="text-sm text-gray-600">
+                Freelancer:
+                <span id="modalFreelancer" class="font-semibold text-gray-900"></span>
+            </p>
+            <p class="mt-2 text-2xl font-bold text-green-600"
+               id="modalAmount"></p>
+            <p class="mt-2 text-xs text-gray-500">
+                This action is irreversible.
+            </p>
+        </div>
+
+        <form id="releaseForm" method="post">
+            <input type="hidden" id="modalPaymentId">
+
+            <div class="flex gap-3">
+                <button type="button"
+                        onclick="closeReleaseModal()"
+                        class="flex-1 py-2 text-sm font-semibold bg-gray-200 rounded-lg">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        class="flex-1 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg">
+                    Confirm Release
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+function openReleaseModal(id, name, amount) {
+    document.getElementById('modalPaymentId').value = id;
+    document.getElementById('modalFreelancer').innerText = name;
+    document.getElementById('modalAmount').innerText = '₹' + amount;
+    document.getElementById('releaseModal').classList.remove('hidden');
+}
+
+function closeReleaseModal() {
+    document.getElementById('releaseModal').classList.add('hidden');
+}
+
+document.getElementById('releaseForm').addEventListener('submit', function () {
+    const id = document.getElementById('modalPaymentId').value;
+    this.action = '/admin/payment/' + id + '/release';
+});
+</script>
+
+</body>
+</html>

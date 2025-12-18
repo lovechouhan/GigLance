@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+  <title>Active Contracts | GigLance</title>
+</head>
+
+<body>
+<div layout:fragment="content"
+     class="min-h-screen p-8 bg-gray-100 text-slate-900">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between p-6 mb-8 shadow-lg rounded-2xl"
+          style="background: linear-gradient(to right, var(--header-bg-color, #4c6ae2), var(--header-bg-color-light, #4c6ae2));">
+    
+    <style>
+      :root {
+        --header-bg-color: #4c6ae2;
+        --header-bg-color-light: #4c6ae2;
+        --header-text-color: #ffffff;
+        --header-subtext-color: #cbd5e1;
+      }
+      
+      header {
+        background: linear-gradient(to right, var(--header-bg-color), var(--header-bg-color-light)) !important;
+      }
+    </style>
+    
+    <div>
+      <h1 class="text-3xl font-bold" style="color: var(--header-text-color);">Active Contracts</h1>
+      <p class="mt-1 text-sm" style="color: var(--header-subtext-color);">View all your active contracts here.</p>
+    </div>
+
+    <div class="flex gap-3">
+      <a th:if="${#authentication.principal.authorities.![authority].contains('ROLE_FREELANCER')}"
+         th:href="@{/freelancer/dashboard/{id}(id=${#authentication.principal.id})}"
+         class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white rounded-lg text-slate-800 hover:bg-gray-100">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </a>
+
+      <a th:if="${#authentication.principal.authorities.![authority].contains('ROLE_CLIENT')}"
+         th:href="@{/client/dashboard}"
+         class="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors bg-white rounded-lg text-slate-800 hover:bg-gray-100">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </a>
+    </div>
+  </header>
+
+  <!-- Filter -->
+  <div class="flex justify-start mb-6">
+    <div class="flex items-center gap-3 p-3 bg-white border border-gray-200 shadow-sm rounded-xl">
+      <span class="pl-2 text-sm font-medium text-slate-600">Filter:</span>
+      <select id="contractStatusFilter"
+              class="px-4 py-2.5 text-sm font-medium text-slate-700 rounded-lg cursor-pointer bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none">
+        <option value="">All Status</option>
+        <option value="NOT_STARTED">Not Started</option>
+        <option value="ACTIVE">Active</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="TERMINATED">Terminated</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="max-w-full mx-auto">
+
+    <!-- Projects List -->
+    <div th:if="${projects != null and !#lists.isEmpty(projects)}"
+         class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div th:each="p : ${projects}"
+           class="overflow-hidden transition-all duration-300 bg-white shadow-sm contract-card rounded-2xl hover:shadow-lg"
+           th:attr="data-status=${p.contract != null ? p.contract.status : 'UNKNOWN'}">
+
+        <!-- Card Header -->
+        <div class="p-5 bg-white">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1">
+              <h2 class="text-xl font-bold text-black" th:text="${p.title}">Project Title</h2>
+              <p class="mt-1 text-sm text-black line-clamp-2" th:text="${p.description}">Project description goes here.</p>
+            </div>
+
+            <!-- Status Badge -->
+            <div th:with="status=${p.contract != null ? p.contract.status.name() : 'UNKNOWN'}">
+              <span th:class="'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wide rounded-full ' +
+                (status == 'NOT_STARTED' ? 'bg-slate-600 text-slate-200' :
+                (status == 'ACTIVE' ? 'bg-green-500 text-white' :
+                (status == 'COMPLETED' ? 'bg-blue-500 text-white' :
+                (status == 'TERMINATED' ? 'bg-red-500 text-white' :
+                'bg-slate-600 text-slate-200'))))">
+                <span th:if="${status == 'NOT_STARTED'}" class="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
+                <span th:if="${status == 'ACTIVE'}" class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                <span th:if="${status == 'COMPLETED'}" class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                <span th:if="${status == 'TERMINATED'}" class="w-1.5 h-1.5 bg-white rounded-full"></span>
+                <span th:text="${status}"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-5">
+          <!-- Info Grid -->
+          <div class="grid grid-cols-2 gap-4 mb-5">
+            <div th:if="${p.client != null}" class="flex items-center gap-3 p-3 rounded-xl bg-purple-50">
+              <img th:if="${p.client.ImageUrl != null and p.client.ImageUrl != ''}"
+                   th:src="@{${p.client.ImageUrl}}"
+                   alt="Client Logo"
+                   class="object-cover w-10 h-10 border border-purple-200 rounded-lg">
+              <div th:if="${p.client.ImageUrl == null or p.client.ImageUrl == ''}"
+                   class="flex items-center justify-center w-10 h-10 bg-purple-500 rounded-lg">
+               <img th:src="@{/images/image.png}"
+                    alt="Default Client Logo"
+                    class="object-cover w-6 h-6 rounded-lg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-purple-600">Client</p>
+                <p class="text-sm font-semibold text-slate-800" th:text="${p.client.name}">Client Name</p>
+              </div>
+            </div>
+
+            <div th:if="${p.budget != null}" class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-emerald-600">Budget</p>
+                <p class="text-sm font-semibold text-slate-800">₹<span th:text="${#numbers.formatDecimal(p.budget, 0, 'COMMA', 2, 'POINT')}">0.00</span></p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50">
+              <div class="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-lg">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-blue-600">Started</p>
+                <p class="text-sm font-semibold text-slate-800">
+                  <span th:if="${p.createdAt != null}" th:text="${#temporals.format(p.createdAt, 'dd MMM yyyy')}">N/A</span>
+                  <span th:if="${p.createdAt == null}">N/A</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-amber-50">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-500">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-amber-600">Deadline</p>
+                <p class="text-sm font-semibold text-slate-800">
+                  <span th:if="${p.deadline != null}" th:text="${#temporals.format(p.deadline, 'dd MMM yyyy')}">N/A</span>
+                  <span th:if="${p.deadline == null}">N/A</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-5">
+            <div class="flex items-center justify-between mb-2 ">
+              <label class="text-sm font-semibold text-slate-700">Progress</label>
+              <span th:if="${p.progress != null}" class="text-sm font-bold text-blue-600" th:text="${p.progress + '%'}">0%</span>
+              <span th:if="${p.progress == null}" class="text-sm font-bold text-blue-600">0%</span>
+            </div>
+            <div th:if="${p.progress != null}" th:with="prog=${p.progress}">
+              <div class="relative w-full h-3 overflow-hidden rounded-full bg-slate-200">
+                <div class="h-3 transition-all duration-500 bg-blue-500 rounded-full"
+                     th:style="'width:' + (${prog != null ? prog : 0}) + '%'"></div>
+              </div>
+            </div>
+            <div th:if="${p.progress == null}">
+              <div class="relative w-full h-3 overflow-hidden rounded-full bg-slate-200">
+                <div class="h-3 bg-blue-500 rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-100">
+            <a th:href="@{/contracts/viewContractDetails/{projectId}(projectId=${p.id})}"
+               class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              View Contract
+            </a>
+            <!-- <a th:href="@{/projects/edit/{id}(id=${p.id})}"
+               class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+              Edit
+            </a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Projects Fallback -->
+    <div th:if="${projects == null or #lists.isEmpty(projects)}"
+         class="p-12 text-center bg-white shadow-sm rounded-2xl">
+      <div class="flex items-center justify-center w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100">
+        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h3 class="mb-2 text-xl font-bold text-slate-800">No Contracts Yet</h3>
+      <p class="max-w-md mx-auto mb-2 font-medium text-slate-600">
+        No freelancer assigned or proposal for this project as of now
+      </p>
+      <p class="max-w-md mx-auto mb-8 text-sm text-slate-500">
+        Once you accept a proposal or hire a freelancer, the contract will appear here.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <a th:href="@{/client/dashboard}"
+           class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<th:block layout:fragment="contractsfilterscript">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const filter = document.getElementById("contractStatusFilter");
+    const cards = document.querySelectorAll(".contract-card");
+
+    filter.addEventListener("change", function () {
+        const selected = this.value.toLowerCase();
+        cards.forEach(card => {
+            const cardStatus = (card.dataset.status || "").toLowerCase();
+            if (selected === "" || selected === cardStatus) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+});
+</script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      layout:decorate="~{base}">
+<head>
+    <title>Register - Choose Role</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Center container -->
+        <div class="flex items-center justify-center min-h-screen px-4 bg-rose-200">
+            <!-- Card -->
+            <div class="w-full max-w-4xl mx-auto">
+                <div class="flex flex-col overflow-hidden shadow-2xl rounded-xl md:flex-row">
+                    <!-- Left side (visual) -->
+                    <div class="items-center hidden p-10 text-white md:flex md:w-1/2 bg-gradient-to-br from-indigo-600 to-purple-600">
+                        <div>
+                            <h2 class="mb-4 text-3xl font-extrabold">Welcome to FreelanceHub</h2>
+                            <p class="text-sm opacity-90">Find projects, hire talent or launch your freelancing career.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right side (form/actions) -->
+                    <div class="w-full p-8 bg-white md:w-1/2">
+                        <h2 class="mb-3 text-2xl font-bold text-center">Create an account</h2>
+                        <p class="mb-6 text-sm text-center text-gray-600">Choose whether you want to register as a Freelancer or a Client</p>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <a th:href="@{/register/freelancer}" class="block p-4 font-medium text-center text-indigo-700 border rounded-lg hover:shadow bg-indigo-50">
+                                Register as Freelancer
+                            </a>
+                            <a th:href="@{/register/client}" class="block p-4 font-medium text-center border rounded-lg text-emerald-700 hover:shadow bg-emerald-50">
+                                Register as Client
+                            </a>
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <a th:href="@{/login}" class="text-sm text-indigo-600 hover:underline">Already have an account? Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

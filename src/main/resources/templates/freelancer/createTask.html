@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Create New Task - Freelancer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="min-h-screen p-6 bg-gray-50">
+            <!-- Header -->
+            <div class="max-w-2xl mx-auto mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Create New Task</h1>
+                        <p class="mt-1 text-gray-600">Add a new task to your project</p>
+                    </div>
+                    <a href="javascript:history.back()" 
+                       class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 transition-all bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="max-w-2xl mx-auto bg-white border border-gray-200 shadow-sm rounded-xl">
+                <div class="p-8">
+                    <form id="createTaskForm" th:action="@{/freelancer/task/create}" th:method="post">
+                        <!-- Title Field -->
+                        <div class="mb-6">
+                            <label for="title" class="block mb-2 text-sm font-medium text-gray-700">
+                                Task Title <span class="text-red-600">*</span>
+                            </label>
+                            <input type="text" id="title" name="title" required
+                                   placeholder="Enter task title"
+                                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <p class="mt-1 text-xs text-gray-500">Be specific about what needs to be done</p>
+                        </div>
+
+                        <!-- Category Field -->
+                        <div class="mb-6">
+                            <label for="category" class="block mb-2 text-sm font-medium text-gray-700">
+                                Category <span class="text-red-600">*</span>
+                            </label>
+                            <select id="category" name="category" required
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="">Select a category</option>
+                                <option value="Frontend">Frontend</option>
+                                <option value="Backend">Backend</option>
+                                <option value="UI/UX">UI/UX Design</option>
+                                <option value="Database">Database</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Documentation">Documentation</option>
+                                <option value="DevOps">DevOps</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="mb-6">
+                            <label for="description" class="block mb-2 text-sm font-medium text-gray-700">
+                                Description <span class="text-gray-400">(Optional)</span>
+                            </label>
+                            <textarea id="description" name="description"
+                                      placeholder="Provide detailed instructions for this task..."
+                                      rows="5"
+                                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"></textarea>
+                            <div class="flex justify-between mt-1">
+                                <p class="text-xs text-gray-500">Add details about what this task involves</p>
+                                <p class="text-xs text-gray-500" id="charCount">0 / 2000</p>
+                            </div>
+                        </div>
+
+                        <!-- Project Info (if applicable) -->
+                        <div th:if="${project != null}" class="p-4 mb-6 border border-blue-200 rounded-lg bg-blue-50">
+                            <p class="text-sm font-medium text-blue-900">Associated Project</p>
+                            <p class="mt-1 text-sm text-blue-700" th:text="${project.title}">Project Title</p>
+                            <input type="hidden" name="projectId" th:value="${project.id}">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                            <button type="button" onclick="history.back()"
+                                    class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-sm">
+                                Create Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center hidden rounded-lg bg-black/40">
+                <div class="p-6 bg-white rounded-lg shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <div class="w-5 h-5 border-2 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                        <span class="text-sm font-medium text-gray-700">Creating task...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Character counter for description
+        document.getElementById('description').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('charCount').textContent = count + ' / 2000';
+        });
+    </script>
+</body>
+</html>

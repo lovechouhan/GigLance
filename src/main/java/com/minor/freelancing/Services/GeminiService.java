@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 @Service
 public class GeminiService {
 
-    // private final String API_KEY = "AIzaSyBXZ2wPw_5GWwg-_USwOhbLlSX0dzZWke8"; //
+   
     // ⚠️ apni key lagao
     // private final String MODEL = "gemini-2.5-flash"; // ya gemini-1.5-flash
 
